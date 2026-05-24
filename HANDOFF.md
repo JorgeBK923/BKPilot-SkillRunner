@@ -2,11 +2,11 @@
 
 **Data:** 2026-05-23
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `06-maia-implementacao`
+**Destino:** Proxima skill MAIA = `12-maia-code-validator` (Antigravity + Gemini 3.1 Pro)
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** APROVADO COM RESSALVAS - backlog pronto, pronto para `06-maia-implementacao` (alvo: T01)
-**Ultima skill executada:** `03-maia-planejamento` (relatorio no hub Producao em `C:\Users\Jorge Alves\IA\Produto\BKPilot-Producao_Produt\docs\maia\03-planejamento\planejamento-2026-05-23-skillrunner.md`)
-**Proxima skill recomendada:** `06-maia-implementacao` (alvo: T01 - Schemas, erros e logger core)
+**Status:** T01 IMPLEMENTADO e smoke-validado (typecheck/lint/build exit 0 pelo Guardiao, independente do Codex). Aguardando commit + validacao formal T02.
+**Ultima skill executada:** `06-maia-implementacao` - T01 (Codex CLI + GPT-5.3 Codex)
+**Proxima skill recomendada:** `12-maia-code-validator` - T02 (testes unitarios dos schemas), com **Antigravity + Gemini 3.1 Pro** (ver emenda ADR-004, 2026-05-23)
 **Bloqueadores atuais:** Nenhum
 **Repo local:** `C:\Users\Jorge Alves\IA\Produto\BKPilot-SkillRunner\` (sem remote - owner adiciona GitHub manualmente)
 
@@ -39,16 +39,21 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ---
 
-## 3. Proxima acao - `06-maia-implementacao`
+## 3. Estado e proxima acao
 
-Comecar por **T01 - Schemas, erros e logger core**:
+### T01 - CONCLUIDO (06-maia-implementacao, Codex/GPT-5.3)
 
-- Criar schemas zod de `manifest.yaml`, `execution-input.json`, `result.json`, `execution-log.json`.
-- Derivar tipos TS via `z.infer`; nao criar interfaces manuais para schemas.
-- Registrar os 16 codigos de erro da especificacao.
-- Nao implementar runtime, Playwright, LLM ou CLI em T01.
+Arquivos criados em `src/core/` (untracked, aguardando commit):
+- `schemas/{manifest,execution-input,result,execution-log}.schema.ts`
+- `types.ts` (tipos via `z.infer`, zero interface manual), `errors.ts` (16 codigos + `SkillRunnerError` + retornaveis ao cliente), `logger.ts` (wrapper pino), `index.ts` (barrel core).
 
-CLI/LLM: Codex CLI + GPT-5.3 Codex conforme ADR-004.
+Smoke do Guardiao (Claude+Opus, vendor distinto do Codex): `npm run typecheck` / `lint` / `build` = exit 0. Validacao FORMAL (testes) e o T02.
+
+### Proximo - T02 (12-maia-code-validator)
+
+Criar `tests/unit/schemas.test.ts` cobrindo manifesto valido/invalido, input valido/invalido, result/log validos; done = `npm run test -- --run tests/unit/schemas.test.ts` passa e cita CAP-1/CAP-7/CAP-8.
+
+**CLI/LLM (emenda ADR-004, 2026-05-23):** `12-maia-code-validator` = **Antigravity CLI + Gemini 3.1 Pro** (NAO Codex/GPT-5.3 - autor != validador). `07-qa` (T22) = **deepseek-v4-pro** executa + **Gemini 3.1 Pro** cobertura.
 
 ---
 
@@ -83,16 +88,17 @@ CLI/LLM: Codex CLI + GPT-5.3 Codex conforme ADR-004.
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T01.
+Executar 12-maia-code-validator no contexto BKPilot-SkillRunner, alvo T02.
+Validador: Antigravity CLI + Gemini 3.1 Pro (emenda ADR-004 - NAO usar Codex/GPT-5.3, que escreveu o codigo).
 
-Ler:
-- HANDOFF.md (este arquivo)
-- ../BKPilot-Producao_Produt/HANDOFF.md (hub)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md
-- ../BKPilot-Producao_Produt/docs/maia/04-arquitetura/arquitetura-2026-05-23-skillrunner.md
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md
+Ler antes:
+- HANDOFF.md (este repo)
+- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (secoes 3-7: schemas + 16 codigos = CONTRATO)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T02 + adendo A1..A7)
+- src/core/** (implementacao a validar)
 
-Produzir T01: schemas zod + tipos derivados + 16 codigos de erro + wrapper pino core. Nao implementar runtime nesta tarefa.
+Tarefa T02: criar tests/unit/schemas.test.ts (vitest) validando os 4 schemas zod + os 16 codigos de erro. Derivar as EXPECTATIVAS da ESPECIFICACAO (contrato), NAO da implementacao. Cobrir manifesto valido/invalido (campo obrigatorio faltando), input valido/invalido, result/log validos, 16 codigos exatos. Comentar CAP-1/CAP-7/CAP-8.
+Done: `npm run test -- --run tests/unit/schemas.test.ts` passa; typecheck/lint sem regressao. Se um teste falhar por bug do 06, NAO corrigir o codigo - registrar achado para devolver ao 06 (autor != validador). Nao commitar, nao push.
 ```
 
 ---
