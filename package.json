@@ -1,0 +1,51 @@
+{
+  "name": "@bugkillers/bkpilot-skillrunner",
+  "version": "0.0.0",
+  "description": "BKPilot Skill Runner Engine — executor de manifestos de skills",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=20 <21"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx src/cli/index.ts",
+    "execute": "tsx src/cli/index.ts execute",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --max-warnings 0",
+    "format": "prettier --write src",
+    "typecheck": "tsc --noEmit",
+    "gate0": "tsx scripts/gate0-validate.ts"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "nanoid": "^5.0.0",
+    "pino": "^9.0.0",
+    "playwright": "^1.45.0",
+    "yaml": "^2.5.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "eslint": "^8.57.0",
+    "pino-pretty": "^11.0.0",
+    "prettier": "^3.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  },
+  "private": true,
+  "license": "UNLICENSED"
+}
