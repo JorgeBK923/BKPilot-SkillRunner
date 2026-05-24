@@ -1,0 +1,4 @@
+id: usabilidade-malformada
+version: "1.0.0
+type: interactive
+description: "Missing quote on version"
