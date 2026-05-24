@@ -1,0 +1,19 @@
+id: usabilidade-valida
+name: Usabilidade Valida
+description: Manifesto valido para smoke do FileSystemSkillLoader.
+version: 1.0.0
+type: interactive
+llm:
+  provider_hint: balanced
+inputs:
+  - name: baseUrl
+    type: url
+    required: true
+    description: URL base da aplicacao sob teste.
+outputs:
+  - name: report
+    type: markdown
+    required: true
+tags:
+  - usabilidade
+language: pt-BR

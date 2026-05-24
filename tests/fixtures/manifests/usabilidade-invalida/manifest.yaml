@@ -1,0 +1,11 @@
+id: usabilidade-invalida
+name: Usabilidade Invalida
+version: beta
+type: interactive
+llm:
+  provider_hint: balanced
+inputs:
+  - name: baseUrl
+    type: url
+    required: true
+    description: URL base da aplicacao sob teste.
