@@ -2,13 +2,13 @@
 
 **Data:** 2026-05-23
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `12-maia-code-validator` (Antigravity + Gemini 3.1 Pro)
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T03 - skill loader YAML), Codex CLI + GPT-5.3 Codex
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01 IMPLEMENTADO e smoke-validado (typecheck/lint/build exit 0 pelo Guardiao, independente do Codex). Aguardando commit + validacao formal T02.
-**Ultima skill executada:** `06-maia-implementacao` - T01 (Codex CLI + GPT-5.3 Codex)
-**Proxima skill recomendada:** `12-maia-code-validator` - T02 (testes unitarios dos schemas), com **Antigravity + Gemini 3.1 Pro** (ver emenda ADR-004, 2026-05-23)
+**Status:** T01 + T02 CONCLUIDOS e no GitHub (commit `f0a9fec`, branch `main`). Core (schemas/erros/logger) implementado e validado. Proximo: T03.
+**Ultima skill executada:** `12-maia-code-validator` - T02 (Antigravity + Gemini 3.1 Pro): 21/21 testes; backstop do Guardiao OK.
+**Proxima skill recomendada:** `06-maia-implementacao` - T03 (skill loader YAML), Codex CLI + GPT-5.3 Codex
 **Bloqueadores atuais:** Nenhum
-**Repo local:** `C:\Users\Jorge Alves\IA\Produto\BKPilot-SkillRunner\` (sem remote - owner adiciona GitHub manualmente)
+**Repo:** local `C:\Users\Jorge Alves\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`)
 
 ---
 
@@ -41,19 +41,17 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01 - CONCLUIDO (06-maia-implementacao, Codex/GPT-5.3)
+### T01 + T02 - CONCLUIDOS e no GitHub (commit `f0a9fec`, branch `main`)
 
-Arquivos criados em `src/core/` (untracked, aguardando commit):
-- `schemas/{manifest,execution-input,result,execution-log}.schema.ts`
-- `types.ts` (tipos via `z.infer`, zero interface manual), `errors.ts` (16 codigos + `SkillRunnerError` + retornaveis ao cliente), `logger.ts` (wrapper pino), `index.ts` (barrel core).
+- **T01** (06-maia-implementacao, Codex/GPT-5.3): `src/core/` - 4 schemas zod (manifest/execution-input/result/execution-log), `types.ts` (z.infer, zero interface manual), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), `index.ts` (barrel).
+- **T02** (12-maia-code-validator, Antigravity + Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - **21/21 passando**, valida os 4 schemas + 16 codigos contra a especificacao (contrato), com fronteiras (timeout/max_attempts), opcionais, negativos e result.error.
+- Backstop do Guardiao (Opus): `test`/`typecheck`/`lint`/`build` verdes. **Nenhum bug encontrado no codigo do 06.**
 
-Smoke do Guardiao (Claude+Opus, vendor distinto do Codex): `npm run typecheck` / `lint` / `build` = exit 0. Validacao FORMAL (testes) e o T02.
+### Proximo - T03 (06-maia-implementacao, Codex/GPT-5.3)
 
-### Proximo - T02 (12-maia-code-validator)
+`FileSystemSkillLoader`: le `skills/<id>/manifest.yaml`, parseia YAML, valida com `skillManifestSchema`. Erros `MANIFEST_NOT_FOUND` e `MANIFEST_INVALID`. Arquivos: `src/runtime/skill-loader.ts`, `tests/fixtures/manifests/*`. CAP-1. Done: loader retorna objeto tipado para fixture valida e erro padronizado para ausente/invalida. Depois, T04 (validacao do loader) = Gemini 3.1 Pro.
 
-Criar `tests/unit/schemas.test.ts` cobrindo manifesto valido/invalido, input valido/invalido, result/log validos; done = `npm run test -- --run tests/unit/schemas.test.ts` passa e cita CAP-1/CAP-7/CAP-8.
-
-**CLI/LLM (emenda ADR-004, 2026-05-23):** `12-maia-code-validator` = **Antigravity CLI + Gemini 3.1 Pro** (NAO Codex/GPT-5.3 - autor != validador). `07-qa` (T22) = **deepseek-v4-pro** executa + **Gemini 3.1 Pro** cobertura.
+**Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` = **deepseek-v4-pro** + Gemini. Backstop = Guardiao (Opus).
 
 ---
 
@@ -88,17 +86,17 @@ Criar `tests/unit/schemas.test.ts` cobrindo manifesto valido/invalido, input val
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 12-maia-code-validator no contexto BKPilot-SkillRunner, alvo T02.
-Validador: Antigravity CLI + Gemini 3.1 Pro (emenda ADR-004 - NAO usar Codex/GPT-5.3, que escreveu o codigo).
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T03.
+CLI/LLM: Codex CLI + GPT-5.3 Codex (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (secoes 3-7: schemas + 16 codigos = CONTRATO)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T02 + adendo A1..A7)
-- src/core/** (implementacao a validar)
+- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (secao 3 schema do manifest + secao 7 codigos + CAP-1)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T03)
+- src/core/** (schemas/erros/logger JA prontos - reutilizar, nao recriar)
 
-Tarefa T02: criar tests/unit/schemas.test.ts (vitest) validando os 4 schemas zod + os 16 codigos de erro. Derivar as EXPECTATIVAS da ESPECIFICACAO (contrato), NAO da implementacao. Cobrir manifesto valido/invalido (campo obrigatorio faltando), input valido/invalido, result/log validos, 16 codigos exatos. Comentar CAP-1/CAP-7/CAP-8.
-Done: `npm run test -- --run tests/unit/schemas.test.ts` passa; typecheck/lint sem regressao. Se um teste falhar por bug do 06, NAO corrigir o codigo - registrar achado para devolver ao 06 (autor != validador). Nao commitar, nao push.
+Tarefa T03: implementar FileSystemSkillLoader em src/runtime/skill-loader.ts que le skills/<id>/manifest.yaml, parseia YAML (pacote `yaml`) e valida com skillManifestSchema (zod). Retorna SkillManifest tipado quando valido; lanca SkillRunnerError MANIFEST_NOT_FOUND quando o arquivo nao existe e MANIFEST_INVALID quando falha no schema. Criar fixtures em tests/fixtures/manifests/ (valido + invalido). NAO implementar Playwright/LLM/CLI/Runner.
+Done: loader retorna objeto tipado para fixture valida e erro padronizado para ausente/invalida; typecheck/lint sem regressao. NAO commitar, NAO push (Guardiao revisa; depois T04 valida via Gemini 3.1 Pro).
 ```
 
 ---
