@@ -118,7 +118,7 @@ ESLint: No issues found
 | Comando bootstrap | `git init` + `git add .` + commit inicial |
 | Mensagem bootstrap | `chore: bootstrap BKPilot-SkillRunner — arquitetura aprovada` |
 | Hash commit bootstrap | `a9d0d5b63c0d1f1fbe28835e6b7b28d59b202c24` |
-| Hash HEAD atual (`git rev-parse HEAD`) | `db5b2e471906e629aa7fb797b071a6d5e0e4a42b` (inclui este relatório) |
+| Hash HEAD atual (`git rev-parse HEAD`) | `bb71c8dc6fdd489d18d474cde7c5ab48f775378c` (inclui este relatório) |
 | Remote | **Nenhum** (conforme pendência humana #2 resolvida) |
 | `git status` pós-commit | clean — nothing to commit |
 
