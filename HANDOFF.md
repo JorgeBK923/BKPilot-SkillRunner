@@ -2,11 +2,11 @@
 
 **Data:** 2026-05-24
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T21 - Gate 0 real com CursorLLM), Codex CLI + GPT-5.3 Codex
+**Destino:** Proxima skill MAIA = `07-maia-qa-validacao` (T22 - QA final Gate 0), deepseek-v4-pro (Ollama) + Gemini 3.1 Pro
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T20 CONCLUIDOS. Commit local `4d1029d`, branch `main`, NAO pushado. **Gate 0 OFICIAL APROVADO** (execute exit 0, gate0 exit 0, G0-1..G0-10 PASS, doc de evidencias registrado). 50 testes verdes. Proximo: T21 (segunda passada CursorLLM).
-**Ultima skill executada:** `06-maia-implementacao` - T20 (Codex/GPT-5.3): Gate 0 oficial com MockLLM, doc gate0-mock-2026-05-25.md; backstop do Guardiao OK (re-rodado 10/10, reprodutivel).
-**Proxima skill recomendada:** `06-maia-implementacao` - T21 (Gate 0 real com CursorLLMClient + paridade) - DEPENDE de CURSOR_LLM_ENDPOINT + CURSOR_LLM_API_KEY no ambiente; sem baseline Claude Code, registrar duvida explicita. Codex CLI + GPT-5.3 Codex
+**Status:** T01-T21 CONCLUIDOS. Commit local `661a386`, branch `main`, NAO pushado. Gate 0 APROVADO com MockLLM (T20) E com LLM real via Groq (T21). 50 testes verdes. Proximo: T22 (QA final).
+**Ultima skill executada:** `06-maia-implementacao` - T21 (Codex/GPT-5.3): Gate 0 real com CursorLLMClient via Groq (script dedicado gate0:cursor); backstop do Guardiao OK (sem-env -> duvida explicita exit 1; com-env status completed confirmado pelo owner; apiKey nao vazada).
+**Proxima skill recomendada:** `07-maia-qa-validacao` - T22 (QA final cobrindo G0-1..G0-10, outputs, logs, stderr, processo Playwright), deepseek-v4-pro (Ollama) + Gemini 3.1 Pro. Validacao NUNCA e Codex (ADR-004).
 **Bloqueadores atuais:** Nenhum
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -41,7 +41,7 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01-T20 - CONCLUIDOS (commit local `4d1029d`, branch `main`, NAO pushado)
+### T01-T21 - CONCLUIDOS (commit local `661a386`, branch `main`, NAO pushado)
 
 - **T01** (06, Codex/GPT-5.3): `src/core/` - 4 schemas zod, `types.ts` (z.infer), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), barrel.
 - **T02** (12, Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - 21/21.
@@ -64,11 +64,12 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 - **T18** (06, Codex): `scripts/gate0-validate.ts` - executa o pipeline e valida G0-1..G0-10; exit 0 com 10/10, exit 1 em falha; G0-10 via delta de processos. CAP-2..CAP-8.
 - **T19** (12, Gemini): `tests/integration/runner-e2e.test.ts` - E2E do Runner com skill usabilidade em tmpdir (status completed, 4 artefatos, >=3 Nielsen, log>=5, sem zumbi). Suite 50/50; lint/typecheck/build/test verdes.
 - **T20** (06, Codex): Gate 0 oficial com MockLLM - `docs/maia/06-implementacao/gate0-mock-2026-05-25.md`; execute exit 0 + gate0 10/10 PASS, reprodutivel no backstop. **Gate 0 APROVADO.**
-- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **50/50 testes + Gate 0 10/10. Nenhum bug em aberto.**
+- **T21** (06, Codex): Gate 0 real com CursorLLMClient via Groq - `scripts/gate0-cursor.ts` + script `gate0:cursor` + `docs/maia/06-implementacao/gate0-cursor-2026-05-25.md`. LLM real status completed; sem config -> duvida explicita exit 1; paridade nao calculavel (sem baseline Claude); apiKey nunca versionada.
+- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **50/50 testes + Gate 0 Mock 10/10 + Gate 0 real (Groq) completed. Nenhum bug em aberto.**
 
-### Proximo - T21 (06-maia-implementacao, Codex/GPT-5.3)
+### Proximo - T22 (07-maia-qa-validacao, deepseek-v4-pro [Ollama] + Gemini 3.1 Pro)
 
-Gate 0 real com `CursorLLMClient` (segunda passada, LLM real) + paridade vs baseline Claude Code. DEPENDENCIA CRITICA: o `CursorLLMClient` exige `CURSOR_LLM_ENDPOINT` + `CURSOR_LLM_API_KEY` no ambiente (env), senao `complete()` lanca `LLM_CALL_FAILED`. Selecionar via `options.llm_override` ou montar Runner com CursorLLMClient. Saida em `outputs/gate0-001-cursor/*` (gitignored) + doc `docs/maia/06-implementacao/gate0-cursor-2026-05-25.md`. Paridade <80% vira RESSALVA DE PROMPT (nao falha de Engine, desde que G0 passe). Se nao houver baseline Claude Code OU endpoint Cursor: registrar DUVIDA EXPLICITA (execucao real nao realizada). NUNCA versionar a apiKey. CAP-1..CAP-8. Depois T22 (QA final = deepseek + Gemini).
+QA final do Gate 0 (primeira entrada do deepseek; NUNCA Codex - ADR-004). Validacao independente cobrindo G0-1..G0-10, outputs (result.json/report.md/screenshot.png/execution-log.json), logs, stderr e ausencia de processo Playwright zumbi - nas duas passadas (Mock T20 e real Groq T21). Produzir `docs/maia/07-qa-validacao/relatorio-gate0-2026-05-25.md` declarando CADA G0 como pass/fail COM evidencia e listando bloqueadores (se houver). Done: relatorio QA completo; nenhum bloqueador aberto para o review. Depois T23 (review final = Cursor + Opus 4.7) e T24 (memoria/encerramento = Cursor + Opus 4.7).
 
 **Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
@@ -105,23 +106,17 @@ Gate 0 real com `CursorLLMClient` (segunda passada, LLM real) + paridade vs base
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T21.
-CLI/LLM: Codex CLI + GPT-5.3 Codex (ADR-004).
+Executar 07-maia-qa-validacao no contexto BKPilot-SkillRunner, alvo T22.
+CLI/LLM: deepseek-v4-pro (Ollama) executa/escreve a validacao + Gemini 3.1 Pro cobertura (ADR-004 - validacao NUNCA e Codex).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T21)
-- src/llm/cursor-llm-client.ts (CursorLLMClient), src/runtime/runner.ts (RunnerDeps - aceita llm custom)
+- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (secao 9 Gate 0 - G0-1..G0-10)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T22)
+- docs/maia/06-implementacao/gate0-mock-2026-05-25.md e gate0-cursor-2026-05-25.md (evidencias das 2 passadas)
+- scripts/gate0-validate.ts, src/runtime/runner.ts
 
-CONTEXTO: a CLI/Runner.createDefault usa MockLLMClient hardcoded e createEffectiveLlm so troca model se ja for Mock - logo a CLI NAO consegue usar Cursor. T21 precisa de um caminho dedicado.
-
-Tarefa T21 (Gate 0 real com CursorLLMClient via Groq, OpenAI-compatible):
-1. Criar scripts/gate0-cursor.ts que: le env CURSOR_LLM_ENDPOINT, CURSOR_LLM_API_KEY, CURSOR_LLM_MODEL (default 'llama-3.3-70b-versatile'); se endpoint/key ausentes -> imprime DUVIDA EXPLICITA e exit 1 (execucao real nao realizada); senao monta new Runner({ loader: FileSystemSkillLoader('skills'), browser: new PlaywrightExecutor(), llm: new CursorLLMClient({model, endpoint, apiKey}), artifacts: new LocalArtifactManager('outputs') }) e roda input lido de inputs/execution-local.json com execution_id sobrescrito p/ 'gate0-001-cursor' (saida em outputs/gate0-001-cursor/, gitignored).
-2. Adicionar script package.json: "gate0:cursor": "tsx scripts/gate0-cursor.ts".
-3. Validar status completed + 4 artefatos; coletar metricas reais (duration, llm_calls, tokens, model_used).
-4. Criar doc docs/maia/06-implementacao/gate0-cursor-2026-05-25.md: comando, modelo Groq usado, metricas reais, nota de PARIDADE (sem baseline Claude Code -> DUVIDA EXPLICITA, paridade nao calculavel), veredito (APROVADO se status completed e G0 essenciais; paridade <80% e ressalva de prompt, nao falha de Engine).
-SEGURANCA: NUNCA logar/printar/versionar a apiKey; nao escrever a key no doc; .env/env vars apenas.
-NAO tocar src/** alem do necessario; preferir so scripts/ + package.json + doc. NAO commitar, NAO push (Guardiao faz backstop).
+Tarefa T22 (QA final independente do Gate 0): revisar criticamente a prova de vida do Engine. Executar/conferir: `npm run gate0` (passada Mock) e, se env Groq disponivel, `npm run gate0:cursor` (passada real). Para CADA criterio G0-1..G0-10, declarar PASS/FAIL com EVIDENCIA concreta (valor observado, nao so "passou"). Cobrir tambem: integridade dos 4 outputs, conteudo dos logs, ausencia de erro nao-tratado no stderr, e nenhum processo Playwright zumbi. Apontar qualquer bloqueador para o review (T23). Produzir docs/maia/07-qa-validacao/relatorio-gate0-2026-05-25.md. NAO alterar codigo do Engine (so reportar); se achar bug, registrar como bloqueador. NUNCA versionar segredos. NAO commitar, NAO push (Guardiao faz backstop; depois T23 review = Cursor + Opus, T24 memoria).
 ```
 
 ---
