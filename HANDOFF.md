@@ -2,11 +2,11 @@
 
 **Data:** 2026-05-24
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T15 - CLI execute), Codex CLI + GPT-5.3 Codex
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T16 - converter skill usabilidade), Codex CLI + GPT-5.3 Codex
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T14 CONCLUIDOS. Commit local `28b0ae7`, branch `main`, NAO pushado. 49 testes verdes + Runner E2E smoke OK (4 artefatos, status completed, 0 zumbi). Pipeline ponta-a-ponta vivo. Proximo: T15 (CLI).
-**Ultima skill executada:** `06-maia-implementacao` - T14 (Codex/GPT-5.3): runner.ts orquestrando CAP-1..CAP-8; backstop do Guardiao OK (E2E gera result.json/execution-log.json/report.md/screenshot.png, status completed, 10 eventos, 0 zumbi).
-**Proxima skill recomendada:** `06-maia-implementacao` - T15 (CLI execute via commander, exit code 0/1), Codex CLI + GPT-5.3 Codex
+**Status:** T01-T15 CONCLUIDOS. Commit local `8c06f70`, branch `main`, NAO pushado. 49 testes verdes + CLI execute smoke OK (exit 0/1 por status, erros amigaveis). Engine completo; falta materializar a skill usabilidade + input + gate0. Proximo: T16.
+**Ultima skill executada:** `06-maia-implementacao` - T15 (Codex/GPT-5.3): src/cli/index.ts comando execute; backstop do Guardiao OK (input ausente exit 1, status failed exit 1, sem stacktrace, outputs/ gitignored).
+**Proxima skill recomendada:** `06-maia-implementacao` - T16 (skills/usabilidade/{manifest.yaml,prompt.md,report-template.md}), Codex CLI + GPT-5.3 Codex
 **Bloqueadores atuais:** Nenhum
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -41,7 +41,7 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01-T14 - CONCLUIDOS (commit local `28b0ae7`, branch `main`, NAO pushado)
+### T01-T15 - CONCLUIDOS (commit local `8c06f70`, branch `main`, NAO pushado)
 
 - **T01** (06, Codex/GPT-5.3): `src/core/` - 4 schemas zod, `types.ts` (z.infer), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), barrel.
 - **T02** (12, Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - 21/21.
@@ -57,15 +57,16 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 - **T12** (06, Codex): `src/runtime/report-generator.ts` - `generateReport` (puro) monta report.md via template ou formato generico (cabecalho/analise/conclusao), combinando LLMResponse + snapshot + screenshot metadata; placeholders nao resolvidos removidos; erro `REPORT_GENERATION_FAILED`. CAP-6.
 - **T13** (12, Gemini): `tests/unit/mock-llm-client.test.ts` + `report-generator.test.ts` - 4 testes (mock offline + LLM_CALL_FAILED; report generico/template sem placeholder cru).
 - **T14** (06, Codex): `src/runtime/runner.ts` - `Runner.run` orquestra CAP-1..CAP-8 (loader->validar inputs->browser->LLM->report->artifacts->status->metrics->cleanup em finally), injecao por construtor + `createDefault()`, result.json gerado mesmo em erro, options output_dir/timeout_override/llm_override.
-- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build` verdes. **49/49 testes + E2E smoke (4 artefatos, status completed, 0 zumbi). Nenhum bug.**
+- **T15** (06, Codex): `src/cli/index.ts` - comando `execute --skill --input` (commander), valida input JSON, roda Runner.createDefault, exit 0/1 por status, erros amigaveis sem stacktrace/segredo. `outputs/` ja gitignored. CAP-8.
+- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build` verdes. **49/49 testes + E2E + CLI smoke. Nenhum bug.**
 
 ### NOTA para T16 (manifest da skill usabilidade)
 
 O `skills/usabilidade/manifest.yaml` deve declarar `outputs` com nomes que casem com os arquivos gravados pelo Runner: usar `report.md` e `screenshot.png` (ou `report`/`screenshot`) como `name` dos outputs required. O `status-resolver` casa por nome com/sem extensao; se os nomes divergirem, o status vira `partial` em vez de `completed`. O input required deve incluir `target_url` (type url).
 
-### Proximo - T15 (06-maia-implementacao, Codex/GPT-5.3)
+### Proximo - T16 (06-maia-implementacao, Codex/GPT-5.3)
 
-CLI execute: `commander` com `execute --skill <id> --input <arquivo.json>`, wiring manual por construtores (Runner.createDefault ou montagem explicita), exit code 0 se completed / 1 se failed|timeout. Manter `src/index.ts` stub SEM ampliar API publica. Arquivo: `src/cli/index.ts`. CAP-8. Done: `npm run execute -- --skill usabilidade --input inputs/execution-local.json` chama o Runner; falha controlada (exit 1, sem stacktrace cru) se o input ainda nao existir. Depois T16 (skill usabilidade) e T17 (input local).
+Converter a skill usabilidade manual em assets do Engine: criar `skills/usabilidade/{manifest.yaml,prompt.md,report-template.md}` a partir de `../BKPilot-Producao_Produt/src/usabilidade.md` (FONTE - o `src/usabilidade.md` referido no plano fica no hub Producao, nao no SkillRunner). Adaptar paths para `outputs/<execution_id>/` e tools do Engine. CAP-1/5/6. manifest DEVE: validar no FileSystemSkillLoader; declarar input required `target_url` (type url); declarar outputs required com `name` = `report.md` e `screenshot.png` (casar com Runner/status-resolver). report-template.md DEVE conter Nielsen H1..H10 + secoes de score / quick wins / parecer tecnico (placeholders {{...}}). Depois T17 (input local) e T18 (gate0 validator).
 
 **Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
@@ -102,17 +103,18 @@ CLI execute: `commander` com `execute --skill <id> --input <arquivo.json>`, wiri
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T15.
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T16.
 CLI/LLM: Codex CLI + GPT-5.3 Codex (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (CAP-8 exit codes + secao 9 Gate 0 comando)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T15)
-- src/runtime/runner.ts (Runner.run / Runner.createDefault - usar, nao recriar), src/cli/index.ts (stub atual)
+- ../BKPilot-Producao_Produt/src/usabilidade.md (FONTE da skill - converter a partir daqui)
+- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (CAP-1 schema manifest + CAP-5 + CAP-6)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T16)
+- src/core/schemas/manifest.schema.ts (skillManifestSchema - o manifest precisa validar nele), src/runtime/skill-loader.ts, src/runtime/report-generator.ts (placeholders {{...}})
 
-Tarefa T15: implementar src/cli/index.ts com commander: comando `execute --skill <id> --input <arquivo.json>`. Ler o arquivo JSON de input, montar ExecutionInput (execution_id/skill_id/inputs), chamar Runner.createDefault().run(input). Imprimir resumo (status, caminho dos outputs). Exit code 0 se status completed; 1 se failed|timeout|cancelled|partial. Falha controlada (mensagem amigavel + exit 1, SEM stacktrace cru / SEM vazar QA_PASSWORD ou segredos) se o arquivo de input nao existir ou for invalido. Manter src/index.ts como esta (NAO ampliar API publica). NAO implementar gate0 (T18).
-Done: `npm run execute -- --skill usabilidade --input inputs/execution-local.json` invoca o Runner; se input ausente, exit 1 com erro claro; typecheck/lint sem regressao. NAO commitar, NAO push (Guardiao faz backstop; depois T16/T17 = Codex, T19 valida = Gemini).
+Tarefa T16: criar skills/usabilidade/manifest.yaml, skills/usabilidade/prompt.md e skills/usabilidade/report-template.md convertendo ../BKPilot-Producao_Produt/src/usabilidade.md para o formato do Engine. Adaptar paths para outputs/<execution_id>/ e tools do Engine. Requisitos: (1) manifest valida no FileSystemSkillLoader (skillManifestSchema); id=usabilidade; input required target_url type url; outputs required com name 'report.md' e 'screenshot.png' (casar com Runner/status-resolver); type interactive ou hybrid; llm.provider_hint definido. (2) prompt.md = system prompt da analise de usabilidade. (3) report-template.md com placeholders {{...}} reconhecidos pelo generator (skill_id, target_url, generated_at, analysis, conclusion) e conteudo cobrindo Nielsen H1..H10 + secoes score / quick wins / parecer tecnico. NAO implementar input local (T17) nem gate0 (T18).
+Done: loader carrega o manifest sem erro; template tem H1..H10 e secoes de score/quick wins/parecer; typecheck/lint sem regressao. NAO commitar, NAO push (Guardiao faz backstop; depois T17 = Codex, T19 valida = Gemini).
 ```
 
 ---
