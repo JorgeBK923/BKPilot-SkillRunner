@@ -2,11 +2,11 @@
 
 **Data:** 2026-05-24
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T20 - Gate 0 com MockLLM), Codex CLI + GPT-5.3 Codex
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T21 - Gate 0 real com CursorLLM), Codex CLI + GPT-5.3 Codex
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T19 CONCLUIDOS. Commit local `14f03a7`, branch `main`, NAO pushado. 50 testes verdes (lint/typecheck/build/test); Gate 0 10/10. Proximo: T20 (executar e registrar Gate 0 oficial).
-**Ultima skill executada:** `12-maia-code-validator` - T19 (Antigravity + Gemini 3.1 Pro): tests/integration/runner-e2e.test.ts; backstop do Guardiao OK (50/50, build verde, 0 zumbi Playwright).
-**Proxima skill recomendada:** `06-maia-implementacao` - T20 (Gate 0 oficial com MockLLM + doc de evidencias), Codex CLI + GPT-5.3 Codex
+**Status:** T01-T20 CONCLUIDOS. Commit local `4d1029d`, branch `main`, NAO pushado. **Gate 0 OFICIAL APROVADO** (execute exit 0, gate0 exit 0, G0-1..G0-10 PASS, doc de evidencias registrado). 50 testes verdes. Proximo: T21 (segunda passada CursorLLM).
+**Ultima skill executada:** `06-maia-implementacao` - T20 (Codex/GPT-5.3): Gate 0 oficial com MockLLM, doc gate0-mock-2026-05-25.md; backstop do Guardiao OK (re-rodado 10/10, reprodutivel).
+**Proxima skill recomendada:** `06-maia-implementacao` - T21 (Gate 0 real com CursorLLMClient + paridade) - DEPENDE de CURSOR_LLM_ENDPOINT + CURSOR_LLM_API_KEY no ambiente; sem baseline Claude Code, registrar duvida explicita. Codex CLI + GPT-5.3 Codex
 **Bloqueadores atuais:** Nenhum
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -41,7 +41,7 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01-T19 - CONCLUIDOS (commit local `14f03a7`, branch `main`, NAO pushado)
+### T01-T20 - CONCLUIDOS (commit local `4d1029d`, branch `main`, NAO pushado)
 
 - **T01** (06, Codex/GPT-5.3): `src/core/` - 4 schemas zod, `types.ts` (z.infer), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), barrel.
 - **T02** (12, Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - 21/21.
@@ -63,11 +63,12 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 - **FIX (06, Codex):** Runner agora usa `report-template.md` da skill (novo `FileSystemSkillLoader.loadReportTemplate`); antes ignorava o template (violava CAP-6). Report da usabilidade sobe para ~6KB com H1..H10.
 - **T18** (06, Codex): `scripts/gate0-validate.ts` - executa o pipeline e valida G0-1..G0-10; exit 0 com 10/10, exit 1 em falha; G0-10 via delta de processos. CAP-2..CAP-8.
 - **T19** (12, Gemini): `tests/integration/runner-e2e.test.ts` - E2E do Runner com skill usabilidade em tmpdir (status completed, 4 artefatos, >=3 Nielsen, log>=5, sem zumbi). Suite 50/50; lint/typecheck/build/test verdes.
+- **T20** (06, Codex): Gate 0 oficial com MockLLM - `docs/maia/06-implementacao/gate0-mock-2026-05-25.md`; execute exit 0 + gate0 10/10 PASS, reprodutivel no backstop. **Gate 0 APROVADO.**
 - Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **50/50 testes + Gate 0 10/10. Nenhum bug em aberto.**
 
-### Proximo - T20 (06-maia-implementacao, Codex/GPT-5.3)
+### Proximo - T21 (06-maia-implementacao, Codex/GPT-5.3)
 
-Gate 0 oficial com MockLLMClient: rodar `npm run execute -- --skill usabilidade --input inputs/execution-local.json` (exit 0) e `npm run gate0` (exit 0, 10/10), capturar stdout/stderr e registrar evidencias num doc `docs/maia/06-implementacao/gate0-mock-2026-05-25.md` (data real). Corrigir APENAS bugs bloqueantes (o pipeline ja passa 10/10 no backstop do Guardiao; nao refatorar). CAP-1..CAP-8. NOTA: `outputs/gate0-001/*` e gitignored (evidencia local, nao versionar) - o doc de evidencias descreve os resultados/metricas (sem segredos). Done: execute exit 0, gate0 exit 0, doc de evidencias criado. Depois T21 (paridade Claude Code, se baseline existir) e T22 (QA final = deepseek+Gemini).
+Gate 0 real com `CursorLLMClient` (segunda passada, LLM real) + paridade vs baseline Claude Code. DEPENDENCIA CRITICA: o `CursorLLMClient` exige `CURSOR_LLM_ENDPOINT` + `CURSOR_LLM_API_KEY` no ambiente (env), senao `complete()` lanca `LLM_CALL_FAILED`. Selecionar via `options.llm_override` ou montar Runner com CursorLLMClient. Saida em `outputs/gate0-001-cursor/*` (gitignored) + doc `docs/maia/06-implementacao/gate0-cursor-2026-05-25.md`. Paridade <80% vira RESSALVA DE PROMPT (nao falha de Engine, desde que G0 passe). Se nao houver baseline Claude Code OU endpoint Cursor: registrar DUVIDA EXPLICITA (execucao real nao realizada). NUNCA versionar a apiKey. CAP-1..CAP-8. Depois T22 (QA final = deepseek + Gemini).
 
 **Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
