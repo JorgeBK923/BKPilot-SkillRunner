@@ -1,0 +1,32 @@
+id: usabilidade
+name: Avaliacao Heuristica de Usabilidade
+description: Avalia a usabilidade de uma pagina com base nas 10 heuristicas de Nielsen, achados priorizados, quick wins e parecer tecnico.
+version: 1.0.0
+type: interactive
+language: pt-BR
+llm:
+  provider_hint: strong
+  system_prompt_file: prompt.md
+inputs:
+  - name: target_url
+    type: url
+    required: true
+    description: URL da pagina ou aplicacao web que sera avaliada pela skill de usabilidade.
+outputs:
+  - name: report.md
+    type: markdown
+    required: true
+  - name: screenshot.png
+    type: png
+    required: true
+timeout_seconds: 1800
+retry:
+  max_attempts: 2
+  on:
+    - llm_error
+    - browser_error
+    - timeout
+tags:
+  - ux
+  - usabilidade
+  - nielsen
