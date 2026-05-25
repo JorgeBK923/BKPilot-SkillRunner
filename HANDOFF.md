@@ -2,11 +2,11 @@
 
 **Data:** 2026-05-24
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `12-maia-code-validator` (T13 - validar mock LLM + report), Antigravity + Gemini 3.1 Pro
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T14 - Runner runtime), Codex CLI + GPT-5.3 Codex
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T12 CONCLUIDOS. Commit local `62b726a`, branch `main`, NAO pushado. 45 testes verdes + report generator smoke OK (template + generico, sem placeholder cru). Proximo: T13 (validacao).
-**Ultima skill executada:** `06-maia-implementacao` - T12 (Codex/GPT-5.3): report-generator.ts (generateReport puro, template/generico, CAP-6); backstop do Guardiao OK (3 secoes, >100 chars, zero placeholder cru).
-**Proxima skill recomendada:** `12-maia-code-validator` - T13 (testes do mock LLM client + report generator), Antigravity + Gemini 3.1 Pro
+**Status:** T01-T13 CONCLUIDOS. Commit local `5a3509e`, branch `main`, NAO pushado. 49 testes verdes (typecheck/lint OK). Pecas isoladas prontas (loader, browser, LLM, report, artifact, status). Proximo: T14 (Runner = orquestrador).
+**Ultima skill executada:** `12-maia-code-validator` - T13 (Antigravity + Gemini 3.1 Pro): testes mock LLM client + report generator; backstop do Guardiao OK (49/49).
+**Proxima skill recomendada:** `06-maia-implementacao` - T14 (Runner.run orquestrando todas as pecas, CAP-1..CAP-8), Codex CLI + GPT-5.3 Codex
 **Bloqueadores atuais:** Nenhum
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -41,7 +41,7 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01-T12 - CONCLUIDOS (commit local `62b726a`, branch `main`, NAO pushado)
+### T01-T13 - CONCLUIDOS (commit local `5a3509e`, branch `main`, NAO pushado)
 
 - **T01** (06, Codex/GPT-5.3): `src/core/` - 4 schemas zod, `types.ts` (z.infer), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), barrel.
 - **T02** (12, Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - 21/21.
@@ -55,11 +55,12 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 - **T10** (12, Gemini): `tests/integration/playwright-executor.test.ts` - 7 testes integracao CAP-2/3/4 com browser real (navigate valida/invalida, snapshot fixture, evaluate, screenshot PNG, close idempotente sem zumbi).
 - **T11** (06, Codex): `src/llm/llm-client.interface.ts` + `mock-llm-client.ts` + `cursor-llm-client.ts` + fixture `tests/fixtures/llm-responses/usabilidade.md` - interface `LLMClient`; Mock offline com model_used/tokens/latencia; Cursor OpenAI-compativel por config/env sem credencial embutida. Erros `LLM_CALL_FAILED`/`LLM_RESPONSE_INVALID`. CAP-5.
 - **T12** (06, Codex): `src/runtime/report-generator.ts` - `generateReport` (puro) monta report.md via template ou formato generico (cabecalho/analise/conclusao), combinando LLMResponse + snapshot + screenshot metadata; placeholders nao resolvidos removidos; erro `REPORT_GENERATION_FAILED`. CAP-6.
-- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build` verdes. **45/45 testes + smokes LLM/report/browser. Nenhum bug.**
+- **T13** (12, Gemini): `tests/unit/mock-llm-client.test.ts` + `report-generator.test.ts` - 4 testes (mock offline + LLM_CALL_FAILED; report generico/template sem placeholder cru).
+- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build` verdes. **49/49 testes. Nenhum bug.**
 
-### Proximo - T13 (12-maia-code-validator, Antigravity + Gemini 3.1 Pro)
+### Proximo - T14 (06-maia-implementacao, Codex/GPT-5.3)
 
-Criar testes unitarios do `MockLLMClient` (CAP-5) e do `report-generator` (CAP-6). Mock: nao faz rede, retorna model_used/tokens/latencia, erro `LLM_CALL_FAILED` quando arquivo custom ausente. Report: secoes obrigatorias presentes, >100 chars, markdown valido, SEM placeholder cru (`{{...}}`/`<n>`), modo template e generico. Arquivos: `tests/unit/mock-llm-client.test.ts`, `tests/unit/report-generator.test.ts`. Done: `npm run test` passa. Validacao NUNCA e Codex (ADR-004). Depois T14 (Runner runtime, Codex).
+Runner runtime: `Runner.run(executionInput)` orquestrando TODAS as pecas ja prontas - loader -> validar inputs -> browser (launch/navigate/snapshot/screenshot) -> LLM (mock por padrao) -> report -> artifacts (result.json/execution-log.json/report.md/screenshot.png) -> status resolver -> metrics -> cleanup. SEM CLI. Arquivo: `src/runtime/runner.ts`. CAP-1..CAP-8. Input segue `executionInputSchema` { execution_id, skill_id, inputs(record), options? }; target_url vem de `input.inputs.target_url`. Done: E2E gera os 4 artefatos e ExecutionResult com status correto; browser sempre fecha. Depois T15 (CLI execute) e T19 (validacao E2E, Gemini).
 
 **Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
@@ -96,20 +97,17 @@ Criar testes unitarios do `MockLLMClient` (CAP-5) e do `report-generator` (CAP-6
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 12-maia-code-validator no contexto BKPilot-SkillRunner, alvo T13.
-CLI/LLM: Antigravity + Gemini 3.1 Pro (ADR-004 - validacao NUNCA e Codex).
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T14.
+CLI/LLM: Codex CLI + GPT-5.3 Codex (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (CAP-5, CAP-6)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T13)
-- src/llm/mock-llm-client.ts e src/runtime/report-generator.ts (alvos - NAO alterar)
+- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (CAP-1..CAP-8 + secao 4 fluxo + secao 5 result + secao 6 log)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T14)
+- src/runtime/** (loader/artifact/status/report), src/tools/browser/** (executor), src/llm/** (clients), src/core/** - TODAS as pecas prontas, reutilizar via construtores (sem DI framework, ADR-012)
 
-Tarefa T13: criar tests/unit/mock-llm-client.test.ts e tests/unit/report-generator.test.ts (vitest).
-Mock (CAP-5): complete() retorna LLMResponse com content (da fixture default), model_used, tokens_in/out > 0, latency_ms >= 0, SEM rede; com responseFilePath custom inexistente -> SkillRunnerError code LLM_CALL_FAILED.
-Report (CAP-6): modo generico -> contem as 3 secoes (Cabecalho/Analise/Conclusao), >100 chars, inclui skillId e targetUrl; modo template -> placeholders {{...}} resolvidos e NENHUM cru no output (inclusive placeholder orfao removido); resultado nunca contem '{{' nem '<n>'.
-NAO tocar src/**, NAO Runner/CLI.
-Done: npm run test passa (todos), typecheck/lint sem regressao. NAO commitar, NAO push (Guardiao faz backstop; depois T14 = Codex).
+Tarefa T14: implementar src/runtime/runner.ts com Runner.run(input: ExecutionInput): Promise<ExecutionResult> orquestrando o fluxo completo CAP-1..CAP-8: validar input (executionInputSchema) -> loader.load(skill_id) -> validar inputs obrigatorios do manifest (INPUT_VALIDATION_FAILED) -> browser launch/navigate(input.inputs.target_url)/snapshot/screenshot -> LLM (MockLLMClient por padrao; selecionavel por options.llm_override) -> generateReport -> artifact manager grava screenshot.png/report.md/result.json/execution-log.json -> resolveStatus -> metrics (llm_calls/tokens/playwright_actions/screenshots_taken) -> SEMPRE close do browser (finally). Acumular log de eventos por fase. Injetar dependencias por construtor (testavel). SEM CLI. NAO criar test file (T19/Gemini).
+Done: chamando run() com fixture usabilidade gera os 4 artefatos em outputs/<execution_id>/ e ExecutionResult com status coerente; browser fecha mesmo em erro; typecheck/lint sem regressao. NAO commitar, NAO push (Guardiao faz backstop E2E; depois T15 CLI = Codex, T19 valida = Gemini).
 ```
 
 ---
