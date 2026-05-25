@@ -1,0 +1,8 @@
+{
+  "execution_id": "gate0-001",
+  "skill_id": "usabilidade",
+  "inputs": {
+    "target_url": "https://example.com",
+    "language": "pt-BR"
+  }
+}
