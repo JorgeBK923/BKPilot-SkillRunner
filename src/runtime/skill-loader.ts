@@ -46,6 +46,20 @@ export class FileSystemSkillLoader {
 
     return result.data;
   }
+
+  async loadReportTemplate(skillId: string): Promise<string | undefined> {
+    const templatePath = path.join(this.skillsDir, skillId, 'report-template.md');
+
+    try {
+      return await readFile(templatePath, 'utf-8');
+    } catch (cause) {
+      if (isNodeError(cause) && cause.code === 'ENOENT') {
+        return undefined;
+      }
+
+      throw new SkillRunnerError('REPORT_GENERATION_FAILED', undefined, { cause });
+    }
+  }
 }
 
 const isNodeError = (error: unknown): error is NodeJS.ErrnoException =>

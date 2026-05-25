@@ -105,7 +105,7 @@ export class Runner {
         log,
       );
       const llmResponse = await this.runLlmPhase(llm, manifest, targetUrl, snapshot, metrics, log);
-      const report = this.runReportPhase(
+      const report = await this.runReportPhase(
         manifest,
         targetUrl,
         snapshot,
@@ -252,15 +252,16 @@ export class Runner {
     return response;
   }
 
-  private runReportPhase(
+  private async runReportPhase(
     manifest: SkillManifest,
     targetUrl: string,
     snapshot: PageSnapshot,
     llmResponse: LLMResponse,
     screenshotName: string,
     log: (level: LogEvent['level'], phase: LogEvent['phase'], message: string, data?: unknown) => void,
-  ): string {
+  ): Promise<string> {
     log('info', 'report', 'Generating markdown report.');
+    const template = await this.deps.loader.loadReportTemplate(manifest.id);
 
     return generateReport({
       skillId: manifest.id,
@@ -274,6 +275,7 @@ export class Runner {
         name: screenshotName,
         path: screenshotName,
       },
+      ...(template === undefined ? {} : { template }),
     });
   }
 
