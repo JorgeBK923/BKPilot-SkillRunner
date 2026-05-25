@@ -2,11 +2,11 @@
 
 **Data:** 2026-05-24
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T14 - Runner runtime), Codex CLI + GPT-5.3 Codex
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T15 - CLI execute), Codex CLI + GPT-5.3 Codex
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T13 CONCLUIDOS. Commit local `5a3509e`, branch `main`, NAO pushado. 49 testes verdes (typecheck/lint OK). Pecas isoladas prontas (loader, browser, LLM, report, artifact, status). Proximo: T14 (Runner = orquestrador).
-**Ultima skill executada:** `12-maia-code-validator` - T13 (Antigravity + Gemini 3.1 Pro): testes mock LLM client + report generator; backstop do Guardiao OK (49/49).
-**Proxima skill recomendada:** `06-maia-implementacao` - T14 (Runner.run orquestrando todas as pecas, CAP-1..CAP-8), Codex CLI + GPT-5.3 Codex
+**Status:** T01-T14 CONCLUIDOS. Commit local `28b0ae7`, branch `main`, NAO pushado. 49 testes verdes + Runner E2E smoke OK (4 artefatos, status completed, 0 zumbi). Pipeline ponta-a-ponta vivo. Proximo: T15 (CLI).
+**Ultima skill executada:** `06-maia-implementacao` - T14 (Codex/GPT-5.3): runner.ts orquestrando CAP-1..CAP-8; backstop do Guardiao OK (E2E gera result.json/execution-log.json/report.md/screenshot.png, status completed, 10 eventos, 0 zumbi).
+**Proxima skill recomendada:** `06-maia-implementacao` - T15 (CLI execute via commander, exit code 0/1), Codex CLI + GPT-5.3 Codex
 **Bloqueadores atuais:** Nenhum
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -41,7 +41,7 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01-T13 - CONCLUIDOS (commit local `5a3509e`, branch `main`, NAO pushado)
+### T01-T14 - CONCLUIDOS (commit local `28b0ae7`, branch `main`, NAO pushado)
 
 - **T01** (06, Codex/GPT-5.3): `src/core/` - 4 schemas zod, `types.ts` (z.infer), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), barrel.
 - **T02** (12, Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - 21/21.
@@ -56,11 +56,16 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 - **T11** (06, Codex): `src/llm/llm-client.interface.ts` + `mock-llm-client.ts` + `cursor-llm-client.ts` + fixture `tests/fixtures/llm-responses/usabilidade.md` - interface `LLMClient`; Mock offline com model_used/tokens/latencia; Cursor OpenAI-compativel por config/env sem credencial embutida. Erros `LLM_CALL_FAILED`/`LLM_RESPONSE_INVALID`. CAP-5.
 - **T12** (06, Codex): `src/runtime/report-generator.ts` - `generateReport` (puro) monta report.md via template ou formato generico (cabecalho/analise/conclusao), combinando LLMResponse + snapshot + screenshot metadata; placeholders nao resolvidos removidos; erro `REPORT_GENERATION_FAILED`. CAP-6.
 - **T13** (12, Gemini): `tests/unit/mock-llm-client.test.ts` + `report-generator.test.ts` - 4 testes (mock offline + LLM_CALL_FAILED; report generico/template sem placeholder cru).
-- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build` verdes. **49/49 testes. Nenhum bug.**
+- **T14** (06, Codex): `src/runtime/runner.ts` - `Runner.run` orquestra CAP-1..CAP-8 (loader->validar inputs->browser->LLM->report->artifacts->status->metrics->cleanup em finally), injecao por construtor + `createDefault()`, result.json gerado mesmo em erro, options output_dir/timeout_override/llm_override.
+- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build` verdes. **49/49 testes + E2E smoke (4 artefatos, status completed, 0 zumbi). Nenhum bug.**
 
-### Proximo - T14 (06-maia-implementacao, Codex/GPT-5.3)
+### NOTA para T16 (manifest da skill usabilidade)
 
-Runner runtime: `Runner.run(executionInput)` orquestrando TODAS as pecas ja prontas - loader -> validar inputs -> browser (launch/navigate/snapshot/screenshot) -> LLM (mock por padrao) -> report -> artifacts (result.json/execution-log.json/report.md/screenshot.png) -> status resolver -> metrics -> cleanup. SEM CLI. Arquivo: `src/runtime/runner.ts`. CAP-1..CAP-8. Input segue `executionInputSchema` { execution_id, skill_id, inputs(record), options? }; target_url vem de `input.inputs.target_url`. Done: E2E gera os 4 artefatos e ExecutionResult com status correto; browser sempre fecha. Depois T15 (CLI execute) e T19 (validacao E2E, Gemini).
+O `skills/usabilidade/manifest.yaml` deve declarar `outputs` com nomes que casem com os arquivos gravados pelo Runner: usar `report.md` e `screenshot.png` (ou `report`/`screenshot`) como `name` dos outputs required. O `status-resolver` casa por nome com/sem extensao; se os nomes divergirem, o status vira `partial` em vez de `completed`. O input required deve incluir `target_url` (type url).
+
+### Proximo - T15 (06-maia-implementacao, Codex/GPT-5.3)
+
+CLI execute: `commander` com `execute --skill <id> --input <arquivo.json>`, wiring manual por construtores (Runner.createDefault ou montagem explicita), exit code 0 se completed / 1 se failed|timeout. Manter `src/index.ts` stub SEM ampliar API publica. Arquivo: `src/cli/index.ts`. CAP-8. Done: `npm run execute -- --skill usabilidade --input inputs/execution-local.json` chama o Runner; falha controlada (exit 1, sem stacktrace cru) se o input ainda nao existir. Depois T16 (skill usabilidade) e T17 (input local).
 
 **Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
@@ -97,17 +102,17 @@ Runner runtime: `Runner.run(executionInput)` orquestrando TODAS as pecas ja pron
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T14.
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T15.
 CLI/LLM: Codex CLI + GPT-5.3 Codex (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (CAP-1..CAP-8 + secao 4 fluxo + secao 5 result + secao 6 log)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T14)
-- src/runtime/** (loader/artifact/status/report), src/tools/browser/** (executor), src/llm/** (clients), src/core/** - TODAS as pecas prontas, reutilizar via construtores (sem DI framework, ADR-012)
+- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (CAP-8 exit codes + secao 9 Gate 0 comando)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T15)
+- src/runtime/runner.ts (Runner.run / Runner.createDefault - usar, nao recriar), src/cli/index.ts (stub atual)
 
-Tarefa T14: implementar src/runtime/runner.ts com Runner.run(input: ExecutionInput): Promise<ExecutionResult> orquestrando o fluxo completo CAP-1..CAP-8: validar input (executionInputSchema) -> loader.load(skill_id) -> validar inputs obrigatorios do manifest (INPUT_VALIDATION_FAILED) -> browser launch/navigate(input.inputs.target_url)/snapshot/screenshot -> LLM (MockLLMClient por padrao; selecionavel por options.llm_override) -> generateReport -> artifact manager grava screenshot.png/report.md/result.json/execution-log.json -> resolveStatus -> metrics (llm_calls/tokens/playwright_actions/screenshots_taken) -> SEMPRE close do browser (finally). Acumular log de eventos por fase. Injetar dependencias por construtor (testavel). SEM CLI. NAO criar test file (T19/Gemini).
-Done: chamando run() com fixture usabilidade gera os 4 artefatos em outputs/<execution_id>/ e ExecutionResult com status coerente; browser fecha mesmo em erro; typecheck/lint sem regressao. NAO commitar, NAO push (Guardiao faz backstop E2E; depois T15 CLI = Codex, T19 valida = Gemini).
+Tarefa T15: implementar src/cli/index.ts com commander: comando `execute --skill <id> --input <arquivo.json>`. Ler o arquivo JSON de input, montar ExecutionInput (execution_id/skill_id/inputs), chamar Runner.createDefault().run(input). Imprimir resumo (status, caminho dos outputs). Exit code 0 se status completed; 1 se failed|timeout|cancelled|partial. Falha controlada (mensagem amigavel + exit 1, SEM stacktrace cru / SEM vazar QA_PASSWORD ou segredos) se o arquivo de input nao existir ou for invalido. Manter src/index.ts como esta (NAO ampliar API publica). NAO implementar gate0 (T18).
+Done: `npm run execute -- --skill usabilidade --input inputs/execution-local.json` invoca o Runner; se input ausente, exit 1 com erro claro; typecheck/lint sem regressao. NAO commitar, NAO push (Guardiao faz backstop; depois T16/T17 = Codex, T19 valida = Gemini).
 ```
 
 ---
