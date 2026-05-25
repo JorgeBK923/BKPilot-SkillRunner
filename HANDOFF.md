@@ -105,22 +105,23 @@ Gate 0 real com `CursorLLMClient` (segunda passada, LLM real) + paridade vs base
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T20.
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T21.
 CLI/LLM: Codex CLI + GPT-5.3 Codex (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (secao 9 Gate 0)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T20)
-- scripts/gate0-validate.ts, inputs/execution-local.json, skills/usabilidade/**
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T21)
+- src/llm/cursor-llm-client.ts (CursorLLMClient), src/runtime/runner.ts (RunnerDeps - aceita llm custom)
 
-Tarefa T20 (Gate 0 oficial com MockLLM): rodar o pipeline real e registrar evidencias.
-1. `npm run execute -- --skill usabilidade --input inputs/execution-local.json` -> deve sair exit 0, status completed.
-2. `npm run gate0` -> deve sair exit 0 com G0-1..G0-10 PASS.
-3. Capturar stdout/stderr e os valores dos artefatos (status, duration_ms, llm_calls, tamanho do report, nº de eventos, heuristicas citadas).
-4. Criar doc docs/maia/06-implementacao/gate0-mock-2026-05-25.md (data real de hoje) com: comando, saida do gate0 (10 linhas G0), metricas e veredito APROVADO. SEM segredos, SEM caminhos absolutos com usuario se possivel.
-Corrigir APENAS bugs bloqueantes (o Guardiao ja validou 10/10; nao refatorar nem mudar pecas). outputs/gate0-001/* e gitignored (evidencia local) - NAO versionar; versionar so o doc .md.
-Done: execute exit 0, gate0 exit 0, doc de evidencias criado em docs/maia/06-implementacao/. NAO commitar, NAO push (Guardiao faz backstop; depois T21/T22).
+CONTEXTO: a CLI/Runner.createDefault usa MockLLMClient hardcoded e createEffectiveLlm so troca model se ja for Mock - logo a CLI NAO consegue usar Cursor. T21 precisa de um caminho dedicado.
+
+Tarefa T21 (Gate 0 real com CursorLLMClient via Groq, OpenAI-compatible):
+1. Criar scripts/gate0-cursor.ts que: le env CURSOR_LLM_ENDPOINT, CURSOR_LLM_API_KEY, CURSOR_LLM_MODEL (default 'llama-3.3-70b-versatile'); se endpoint/key ausentes -> imprime DUVIDA EXPLICITA e exit 1 (execucao real nao realizada); senao monta new Runner({ loader: FileSystemSkillLoader('skills'), browser: new PlaywrightExecutor(), llm: new CursorLLMClient({model, endpoint, apiKey}), artifacts: new LocalArtifactManager('outputs') }) e roda input lido de inputs/execution-local.json com execution_id sobrescrito p/ 'gate0-001-cursor' (saida em outputs/gate0-001-cursor/, gitignored).
+2. Adicionar script package.json: "gate0:cursor": "tsx scripts/gate0-cursor.ts".
+3. Validar status completed + 4 artefatos; coletar metricas reais (duration, llm_calls, tokens, model_used).
+4. Criar doc docs/maia/06-implementacao/gate0-cursor-2026-05-25.md: comando, modelo Groq usado, metricas reais, nota de PARIDADE (sem baseline Claude Code -> DUVIDA EXPLICITA, paridade nao calculavel), veredito (APROVADO se status completed e G0 essenciais; paridade <80% e ressalva de prompt, nao falha de Engine).
+SEGURANCA: NUNCA logar/printar/versionar a apiKey; nao escrever a key no doc; .env/env vars apenas.
+NAO tocar src/** alem do necessario; preferir so scripts/ + package.json + doc. NAO commitar, NAO push (Guardiao faz backstop).
 ```
 
 ---
