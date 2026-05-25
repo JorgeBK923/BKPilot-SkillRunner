@@ -2,11 +2,11 @@
 
 **Data:** 2026-05-24
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
-**Destino:** Proxima skill MAIA = `12-maia-code-validator` (T19 - validacao em lote), Antigravity + Gemini 3.1 Pro
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` (T20 - Gate 0 com MockLLM), Codex CLI + GPT-5.3 Codex
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T18 CONCLUIDOS. Commit local `88647c0`, branch `main`, NAO pushado. 49 testes verdes; **Gate 0 verde de ponta a ponta** (`npm run gate0` = G0-1..G0-10 PASS, exit 0; exit 1 em falha). Proximo: T19 (validacao em lote).
-**Ultima skill executada:** `06-maia-implementacao` - T18 (Codex/GPT-5.3): scripts/gate0-validate.ts; backstop do Guardiao OK (10/10 PASS exit 0; input ausente -> exit 1 com motivos; delta de processos p/ G0-10).
-**Proxima skill recomendada:** `12-maia-code-validator` - T19 (E2E do Runner + suite lint/typecheck/build/test), Antigravity + Gemini 3.1 Pro
+**Status:** T01-T19 CONCLUIDOS. Commit local `14f03a7`, branch `main`, NAO pushado. 50 testes verdes (lint/typecheck/build/test); Gate 0 10/10. Proximo: T20 (executar e registrar Gate 0 oficial).
+**Ultima skill executada:** `12-maia-code-validator` - T19 (Antigravity + Gemini 3.1 Pro): tests/integration/runner-e2e.test.ts; backstop do Guardiao OK (50/50, build verde, 0 zumbi Playwright).
+**Proxima skill recomendada:** `06-maia-implementacao` - T20 (Gate 0 oficial com MockLLM + doc de evidencias), Codex CLI + GPT-5.3 Codex
 **Bloqueadores atuais:** Nenhum
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -41,7 +41,7 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01-T18 - CONCLUIDOS (commit local `88647c0`, branch `main`, NAO pushado)
+### T01-T19 - CONCLUIDOS (commit local `14f03a7`, branch `main`, NAO pushado)
 
 - **T01** (06, Codex/GPT-5.3): `src/core/` - 4 schemas zod, `types.ts` (z.infer), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), barrel.
 - **T02** (12, Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - 21/21.
@@ -62,11 +62,12 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 - **T17** (06, Codex): `inputs/execution-local.json` (gate0-001, usabilidade, inputs.target_url/language) - valida no schema, dispara E2E via CLI.
 - **FIX (06, Codex):** Runner agora usa `report-template.md` da skill (novo `FileSystemSkillLoader.loadReportTemplate`); antes ignorava o template (violava CAP-6). Report da usabilidade sobe para ~6KB com H1..H10.
 - **T18** (06, Codex): `scripts/gate0-validate.ts` - executa o pipeline e valida G0-1..G0-10; exit 0 com 10/10, exit 1 em falha; G0-10 via delta de processos. CAP-2..CAP-8.
-- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **49/49 testes + Gate 0 10/10. Nenhum bug em aberto.**
+- **T19** (12, Gemini): `tests/integration/runner-e2e.test.ts` - E2E do Runner com skill usabilidade em tmpdir (status completed, 4 artefatos, >=3 Nielsen, log>=5, sem zumbi). Suite 50/50; lint/typecheck/build/test verdes.
+- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **50/50 testes + Gate 0 10/10. Nenhum bug em aberto.**
 
-### Proximo - T19 (12-maia-code-validator, Antigravity + Gemini 3.1 Pro)
+### Proximo - T20 (06-maia-implementacao, Codex/GPT-5.3)
 
-Validacao em lote: criar `tests/integration/runner-e2e.test.ts` (vitest) cobrindo o Runner E2E com a skill usabilidade (status completed, 4 artefatos, report com Nielsen, sem zumbi) usando tmpdir/output_dir custom; conferir CLI execute e o gate0 validator. Rodar e garantir verdes: `npm run lint`, `npm run typecheck`, `npm run build`, `npm run test`. CAP-1..CAP-8. Done: suite completa passa sem regressao; E2E do Runner coberto por teste. Validacao NUNCA e Codex (ADR-004). Depois T20 (Gate 0 oficial com MockLLM, Codex).
+Gate 0 oficial com MockLLMClient: rodar `npm run execute -- --skill usabilidade --input inputs/execution-local.json` (exit 0) e `npm run gate0` (exit 0, 10/10), capturar stdout/stderr e registrar evidencias num doc `docs/maia/06-implementacao/gate0-mock-2026-05-25.md` (data real). Corrigir APENAS bugs bloqueantes (o pipeline ja passa 10/10 no backstop do Guardiao; nao refatorar). CAP-1..CAP-8. NOTA: `outputs/gate0-001/*` e gitignored (evidencia local, nao versionar) - o doc de evidencias descreve os resultados/metricas (sem segredos). Done: execute exit 0, gate0 exit 0, doc de evidencias criado. Depois T21 (paridade Claude Code, se baseline existir) e T22 (QA final = deepseek+Gemini).
 
 **Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
@@ -103,17 +104,22 @@ Validacao em lote: criar `tests/integration/runner-e2e.test.ts` (vitest) cobrind
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 12-maia-code-validator no contexto BKPilot-SkillRunner, alvo T19.
-CLI/LLM: Antigravity + Gemini 3.1 Pro (ADR-004 - validacao NUNCA e Codex).
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo T20.
+CLI/LLM: Codex CLI + GPT-5.3 Codex (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (CAP-1..CAP-8 + secao 9)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T19)
-- src/runtime/runner.ts, src/cli/index.ts, scripts/gate0-validate.ts, skills/usabilidade/** (alvos - NAO alterar)
+- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (secao 9 Gate 0)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T20)
+- scripts/gate0-validate.ts, inputs/execution-local.json, skills/usabilidade/**
 
-Tarefa T19 (validacao em lote): criar tests/integration/runner-e2e.test.ts (vitest) cobrindo o Runner E2E com a skill usabilidade real. Usar output_dir custom (tmpdir) p/ nao sujar outputs/ do repo; navegar a uma URL estavel (https://example.com OU a fixture tests/fixtures/pages/usabilidade.html via pathToFileURL). Asserts: status==='completed'; 4 outputs gravados (result.json/execution-log.json/report.md/screenshot.png) existem em disco; report contem >=3 heuristicas Nielsen; execution-log events>=5; metrics.llm_calls>=1; nenhum processo Chromium zumbi (afterAll fecha). Timeout generoso (browser real). NAO tocar src/**, scripts/** nem skills/**. Pode ajustar testes existentes SO se houver regressao real.
-Done: `npm run lint`, `npm run typecheck`, `npm run build`, `npm run test` TODOS verdes; E2E do Runner coberto. NAO commitar, NAO push (Guardiao faz backstop; depois T20 = Gate 0 MockLLM Codex).
+Tarefa T20 (Gate 0 oficial com MockLLM): rodar o pipeline real e registrar evidencias.
+1. `npm run execute -- --skill usabilidade --input inputs/execution-local.json` -> deve sair exit 0, status completed.
+2. `npm run gate0` -> deve sair exit 0 com G0-1..G0-10 PASS.
+3. Capturar stdout/stderr e os valores dos artefatos (status, duration_ms, llm_calls, tamanho do report, nº de eventos, heuristicas citadas).
+4. Criar doc docs/maia/06-implementacao/gate0-mock-2026-05-25.md (data real de hoje) com: comando, saida do gate0 (10 linhas G0), metricas e veredito APROVADO. SEM segredos, SEM caminhos absolutos com usuario se possivel.
+Corrigir APENAS bugs bloqueantes (o Guardiao ja validou 10/10; nao refatorar nem mudar pecas). outputs/gate0-001/* e gitignored (evidencia local) - NAO versionar; versionar so o doc .md.
+Done: execute exit 0, gate0 exit 0, doc de evidencias criado em docs/maia/06-implementacao/. NAO commitar, NAO push (Guardiao faz backstop; depois T21/T22).
 ```
 
 ---
