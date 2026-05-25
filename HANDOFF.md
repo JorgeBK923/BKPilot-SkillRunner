@@ -1,6 +1,8 @@
 # HANDOFF - BKPilot-SkillRunner - Pre-Sprint Tecnica
 
-**Data:** 2026-05-24
+> **SESSAO PAUSADA em 2026-05-25.** Retomar em **T22** (QA final = deepseek-v4-pro [Ollama] + Gemini 3.1 Pro). 21/24 tarefas concluidas; Gate 0 APROVADO (Mock 10/10 + real Groq completed); 50 testes verdes; HEAD local `02b9d4d` (branch main, NAO pushado). Brief do T22 e caminho de chamada na secao 6.
+
+**Data:** 2026-05-25
 **Origem:** Guardiao MAIA (skill `03-maia-planejamento`)
 **Destino:** Proxima skill MAIA = `07-maia-qa-validacao` (T22 - QA final Gate 0), deepseek-v4-pro (Ollama) + Gemini 3.1 Pro
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
