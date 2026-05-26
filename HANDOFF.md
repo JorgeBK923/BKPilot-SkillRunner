@@ -1,14 +1,14 @@
 # HANDOFF - BKPilot-SkillRunner - Pre-Sprint Tecnica
 
-> **T22 CONCLUIDO em 2026-05-25.** Retomar em **T23** (review final = Cursor + Opus 4.7). 22/24 tarefas concluidas; Gate 0 APROVADO (Mock 10/10 + real Groq completed); QA final APROVADO 10/10 (G0-1..G0-10 com evidencia); 50 testes verdes; HEAD local `a14bd82` (branch main, NAO pushado). Brief do T23 e caminho de chamada na secao 6.
+> **T23 CONCLUIDO em 2026-05-25.** Retomar em **T24** (memoria/encerramento = Cursor + Opus 4.7). 23/24 tarefas concluidas; Gate 0 APROVADO (Mock 10/10 + real Groq completed); QA final 10/10 + cobertura Gemini CONCORDA (T22); review final **APROVA COM RESSALVAS** (T23, zero bloqueador, 10 debitos p/ Sprint 1); 50 testes verdes; HEAD local apos commits do review = `d4c0210` (branch main, NAO pushado, ahead 42 - o commit deste handoff avanca +1). Brief do T24 e caminho de chamada na secao 6.
 
 **Data:** 2026-05-25
 **Origem:** Guardiao MAIA
-**Destino:** Proxima skill MAIA = `08-maia-review` (T23 - review final), Cursor + Opus 4.7
+**Destino:** Proxima skill MAIA = `10-maia-memoria` (T24 - memoria/encerramento + abertura Sprint 1), Cursor + Opus 4.7
 **Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T22 CONCLUIDOS. Commit local `a14bd82`, branch `main`, NAO pushado (ahead 38). Gate 0 APROVADO com MockLLM (T20) E com LLM real via Groq (T21). QA final APROVADO 10/10 (T22). 50 testes verdes. Proximo: T23 (review final).
-**Ultima skill executada:** `07-maia-qa-validacao` - T22 (deepseek-v4-pro [Ollama] executa + Gemini 3.1 Pro cobertura; ADR-004 validacao nunca e Codex): QA final independente do Gate 0 em DOIS passos. deepseek -> relatorio (G0-1..G0-10 PASS com evidencia, 4 outputs integros, stderr limpo, zero zumbi); Gemini -> cobertura independente (gate0 proprio 10/10, valores batem, veredito CONCORDA). Artefatos: `relatorio-gate0-2026-05-25.md` + `cobertura-gemini-gate0-2026-05-25.md` (+ espelhos no hub). Backstop do Guardiao: gate0 re-run 10/10 exit 0; claims conferidos contra disco; execucao real do Gemini confirmada por artefato distinto; codigo do Engine nao alterado. Nenhum bloqueador.
-**Proxima skill recomendada:** `08-maia-review` - T23 (review final do Gate 0 e do codigo do Engine), Cursor + Opus 4.7. Depois T24 (memoria/encerramento = Cursor + Opus 4.7).
+**Status:** T01-T23 CONCLUIDOS. HEAD local `d4c0210` (antes deste handoff), branch `main`, NAO pushado (ahead 42). Gate 0 APROVADO com MockLLM (T20) E com LLM real via Groq (T21). QA final 10/10 + cobertura Gemini CONCORDA (T22). Review final APROVA COM RESSALVAS (T23). 50 testes verdes. Proximo: T24 (memoria/encerramento).
+**Ultima skill executada:** `08-maia-review` - T23 (Cursor + Opus 4.7; autor != revisor): review final do Gate 0 e do codigo do Engine (T01-T22). Verificacao independente reproduzida (typecheck exit 0, lint 0, test 50/50, gate0 10/10, 4 artefatos integros, higiene de segredos OK). Leu src/ completo, schemas, scripts, testes. QA T22 + cobertura Gemini validos. ADRs 001-012 aderentes (011 pino parcial). Veredito: **APROVA COM RESSALVAS**, zero bloqueador, 10 debitos para Sprint 1 (D1-D10, ver secao 3). Artefato: `docs/maia/08-review/review-gate0-2026-05-25.md` (+ espelho no hub). Backstop do Guardiao: bateria reproduzida verde; claims conferidos; codigo do Engine nao alterado.
+**Proxima skill recomendada:** `10-maia-memoria` - T24 (memoria/encerramento da Pre-Sprint + abertura Sprint 1), Cursor + Opus 4.7. Ultima tarefa da Pre-Sprint Tecnica.
 **Bloqueadores atuais:** Nenhum
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -43,7 +43,7 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
 
 ## 3. Estado e proxima acao
 
-### T01-T22 - CONCLUIDOS (commit local `a14bd82`, branch `main`, NAO pushado, ahead 38)
+### T01-T23 - CONCLUIDOS (HEAD local `d4c0210`, branch `main`, NAO pushado, ahead 42)
 
 - **T01** (06, Codex/GPT-5.3): `src/core/` - 4 schemas zod, `types.ts` (z.infer), `errors.ts` (16 codigos + `SkillRunnerError`), `logger.ts` (pino), barrel.
 - **T02** (12, Gemini 3.1 Pro): `tests/unit/schemas.test.ts` - 21/21.
@@ -72,11 +72,22 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
   - **Gemini (cobertura)** - `docs/maia/07-qa-validacao/cobertura-gemini-gate0-2026-05-25.md` (+ espelho no hub): segunda lente independente; rodou `npm run gate0` proprio (exit 0, 10/10); valores batem com o relatorio deepseek (duration 4084ms = variancia natural); G0-1..G0-10 CONFIRMO, sem divergencias/alucinacoes. **Veredito: CONCORDA.** Fecha ADR-004 (autor != validador).
   - Groq nao reproduzido (GROQ_API_KEY/CURSOR_LLM_* ausentes) -> graceful degradation OK (DUVIDA EXPLICITA + exit 1); T21 ja aprovado pelo owner. Paridade nao calculavel (sem baseline Claude) - nao bloqueia (spec sec 9). Codigo NAO alterado.
   - **Correcao de processo (2026-05-25):** a cobertura Gemini NAO havia rodado quando o relatorio deepseek foi inicialmente commitado (Guardiao deu comando combinado em vez de tarefa separada por modelo; owner pegou). Corrigido: tarefa Gemini dada em passo proprio, artefato distinto, backstop confirmou execucao real. Regra nova: 1 modelo = 1 tarefa = 1 arquivo; backstop nunca assina papel de modelo sem trace em disco.
-- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **50/50 testes + Gate 0 Mock 10/10 + Gate 0 real (Groq) completed + QA final T22 10/10. Nenhum bug em aberto.** Backstop T22: typecheck/lint limpos, 50/50, gate0 re-run 10/10 exit 0, claims conferidos contra disco.
+- **T23** (08, Cursor + Opus 4.7; autor != revisor): review final do Gate 0 e do codigo do Engine (T01-T22) - `docs/maia/08-review/review-gate0-2026-05-25.md` (+ espelho no hub). Verificacao independente reproduzida (typecheck exit 0, lint 0, test 50/50, gate0 10/10, 4 artefatos integros, higiene de segredos OK; leu src/ completo, schemas, scripts, testes). QA T22 + cobertura Gemini validos. ADRs 001-012 aderentes. **Veredito: APROVA COM RESSALVAS. Zero bug/bloqueador.** 10 debitos para Sprint 1 (NAO bloqueiam Gate 0):
+  - **D1** timeout global nao enforcado (`manifest.timeout_seconds` ignorado) - MEDIA
+  - **D2** retry declarado no manifesto mas nao implementado - MEDIA
+  - **D3** fallback LLM ausente (deferido de proposito)
+  - **D4** logger pino existe/exportado mas nao consumido pelo Runtime (ADR-011 parcial)
+  - **D5** aliasing em `result.outputs`
+  - **D6** `metrics` opcional no schema
+  - **D7** `llm_override.provider` ignorado
+  - **D8** lacunas de teste (caminhos failed/partial, cursor-client)
+  - **D9** paridade ADR-005 nao medida (sem baseline Claude)
+  - **D10** HANDOFF citava HEAD stale (corrigido neste handoff)
+- Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **50/50 testes + Gate 0 Mock 10/10 + Gate 0 real (Groq) completed + QA final T22 10/10 + cobertura Gemini CONCORDA + review T23 APROVA COM RESSALVAS. Nenhum bug em aberto.** Backstop T23: bateria reproduzida (typecheck exit 0/lint 0/50-50/gate0 10-10), claims conferidos, codigo do Engine nao alterado.
 
-### Proximo - T23 (08-maia-review, Cursor + Opus 4.7)
+### Proximo - T24 (10-maia-memoria, Cursor + Opus 4.7) - ULTIMA da Pre-Sprint
 
-Review final do Gate 0 e do codigo do Engine (T01-T22). Revisar criticamente: arquitetura/qualidade do Runner e pecas (CAP-1..CAP-8), aderencia aos ADRs, cobertura de testes (50/50), o relatorio QA do T22 (G0-1..G0-10), e prontidao para encerramento. Apontar debitos tecnicos/ressalvas para o T24. Done: review registrado; decisao APROVA/RESSALVAS para o encerramento. Depois T24 (memoria/encerramento = Cursor + Opus 4.7).
+Memoria/encerramento da Pre-Sprint Tecnica + abertura da Sprint 1. Escrever `docs/maia/10-memoria/memoria-gate0-2026-05-25.md`: consolidar resultado do Gate 0 (T01-T23), ADRs, e os 10 debitos (D1-D10) como backlog inicial da Sprint 1 com dono. Atualizar HANDOFF dos DOIS repos apontando a primeira skill da Sprint 1 (Engine real reutilizavel: converter as 12 skills restantes, CursorLLM real, paridade >= 95%). Done: memoria escrita; nenhum debito do Gate 0 sem dono; HANDOFFs apontam Sprint 1. Fim da Pre-Sprint Tecnica.
 
 **Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
@@ -113,18 +124,18 @@ Review final do Gate 0 e do codigo do Engine (T01-T22). Revisar criticamente: ar
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 08-maia-review no contexto BKPilot-SkillRunner, alvo T23.
-CLI/LLM: Cursor + Opus 4.7 (review final). Autor != revisor (codigo do Engine = Codex/GPT-5.3).
+Executar 10-maia-memoria no contexto BKPilot-SkillRunner, alvo T24 (ULTIMA da Pre-Sprint Tecnica).
+CLI/LLM: Cursor + Opus 4.7.
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/02-especificacao/especificacao-2026-05-23-skillrunner.md (sec 9 Gate 0 + CAP-1..CAP-8)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T23)
-- docs/maia/07-qa-validacao/relatorio-gate0-2026-05-25.md (QA final T22)
+- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T24)
+- ../BKPilot-Producao_Produt/docs/maia/01-diagnostico/diagnostico-2026-05-23-skillrunner.md (roadmap de sprints + abertura Sprint 1)
+- docs/maia/08-review/review-gate0-2026-05-25.md (review T23 + debitos D1-D10)
+- docs/maia/07-qa-validacao/ (relatorio deepseek + cobertura Gemini)
 - docs/maia/06-implementacao/gate0-mock-2026-05-25.md e gate0-cursor-2026-05-25.md
-- src/ (runner.ts + pecas CAP-1..CAP-8), tests/, scripts/gate0-validate.ts
 
-Tarefa T23 (review final): revisar criticamente codigo do Engine (T01-T22) e a prova de vida Gate 0. Avaliar: arquitetura/qualidade do Runner e pecas, aderencia aos ADRs 001-012, cobertura/qualidade dos 50 testes, validade do relatorio QA T22 (G0-1..G0-10), e prontidao para encerramento. Apontar debitos tecnicos e ressalvas para o T24. Produzir relatorio de review em docs/maia/08-review/. Decisao: APROVA / APROVA COM RESSALVAS / REPROVA. Se achar bug, registrar como bloqueador. NUNCA versionar segredos. NAO commitar, NAO push (Guardiao faz backstop; depois T24 memoria/encerramento = Cursor + Opus 4.7).
+Tarefa T24 (memoria/encerramento + abertura Sprint 1): consolidar o resultado do Gate 0 (T01-T23) em docs/maia/10-memoria/memoria-gate0-2026-05-25.md - resultado, ADRs 001-012, e os 10 debitos (D1-D10) do review como backlog inicial da Sprint 1, cada um com dono. Atualizar o HANDOFF dos DOIS repos apontando a primeira skill da Sprint 1 (Engine real reutilizavel: converter as 12 skills restantes via convert-skill.ts, CursorLLM real, meta paridade >= 95%). Done: memoria escrita; nenhum debito do Gate 0 sem dono; HANDOFFs apontam Sprint 1; Gate 0 encerrado sem pendencia. NAO incluir escopo Sprint 1 dentro do Gate 0. NUNCA versionar segredos. NAO commitar, NAO push (Guardiao faz backstop).
 ```
 
 ---
