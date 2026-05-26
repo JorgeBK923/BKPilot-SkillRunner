@@ -1,15 +1,15 @@
 # HANDOFF - BKPilot-SkillRunner - Pre-Sprint Tecnica
 
-> **T23 CONCLUIDO em 2026-05-25.** Retomar em **T24** (memoria/encerramento = Cursor + Opus 4.7). 23/24 tarefas concluidas; Gate 0 APROVADO (Mock 10/10 + real Groq completed); QA final 10/10 + cobertura Gemini CONCORDA (T22); review final **APROVA COM RESSALVAS** (T23, zero bloqueador, 10 debitos p/ Sprint 1); 50 testes verdes; HEAD local apos commits do review = `d4c0210` (branch main, NAO pushado, ahead 42 - o commit deste handoff avanca +1). Brief do T24 e caminho de chamada na secao 6.
+> **PRE-SPRINT TECNICA ENCERRADA em 2026-05-25 (T24 concluido, ULTIMA tarefa).** 24/24 tarefas concluidas; **Gate 0 APROVADO COM RESSALVAS** (Mock 10/10 + real Groq completed); QA final 10/10 + cobertura Gemini CONCORDA (T22); review final APROVA COM RESSALVAS (T23, zero bloqueador); 50 testes verdes; branch `main`, NAO pushado (nao fixar SHA - ver D10). **Gate 0 encerrado SEM pendencia sem dono** - debitos D1-D10 transferidos p/ Sprint 1 com dono (memoria sec 4). **Proxima etapa = Sprint 1 (Engine real reutilizavel):** `06-maia-implementacao` T01 = criar `scripts/convert-skill.ts` (Codex / GPT-5.3). Comando na secao 6.
 
 **Data:** 2026-05-25
 **Origem:** Guardiao MAIA
-**Destino:** Proxima skill MAIA = `10-maia-memoria` (T24 - memoria/encerramento + abertura Sprint 1), Cursor + Opus 4.7
-**Escopo:** Skill Runner Engine isolado - Gate 0 com skill **Usabilidade**
-**Status:** T01-T23 CONCLUIDOS. HEAD local `d4c0210` (antes deste handoff), branch `main`, NAO pushado (ahead 42). Gate 0 APROVADO com MockLLM (T20) E com LLM real via Groq (T21). QA final 10/10 + cobertura Gemini CONCORDA (T22). Review final APROVA COM RESSALVAS (T23). 50 testes verdes. Proximo: T24 (memoria/encerramento).
-**Ultima skill executada:** `08-maia-review` - T23 (Cursor + Opus 4.7; autor != revisor): review final do Gate 0 e do codigo do Engine (T01-T22). Verificacao independente reproduzida (typecheck exit 0, lint 0, test 50/50, gate0 10/10, 4 artefatos integros, higiene de segredos OK). Leu src/ completo, schemas, scripts, testes. QA T22 + cobertura Gemini validos. ADRs 001-012 aderentes (011 pino parcial). Veredito: **APROVA COM RESSALVAS**, zero bloqueador, 10 debitos para Sprint 1 (D1-D10, ver secao 3). Artefato: `docs/maia/08-review/review-gate0-2026-05-25.md` (+ espelho no hub). Backstop do Guardiao: bateria reproduzida verde; claims conferidos; codigo do Engine nao alterado.
-**Proxima skill recomendada:** `10-maia-memoria` - T24 (memoria/encerramento da Pre-Sprint + abertura Sprint 1), Cursor + Opus 4.7. Ultima tarefa da Pre-Sprint Tecnica.
-**Bloqueadores atuais:** Nenhum
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` (Sprint 1, T01 - `convert-skill.ts`), Codex / GPT-5.3
+**Escopo:** Pre-Sprint Tecnica ENCERRADA (Gate 0 provado e fechado). Abrindo Sprint 1 = Engine real reutilizavel: converter as 12 skills web restantes via `convert-skill.ts`, CursorLLM real como caminho padrao, meta paridade >= 95% vs Claude Code, saldar D1-D8.
+**Status:** T01-T24 CONCLUIDOS. Branch `main`, NAO pushado. Gate 0 APROVADO com MockLLM (T20) E com LLM real via Groq (T21); QA final 10/10 (T22); review final APROVA COM RESSALVAS (T23); memoria/encerramento + abertura Sprint 1 (T24). 50 testes verdes. **Gate 0 encerrado sem pendencia sem dono.** Backstop do Guardiao sobre o T24 pendente.
+**Ultima skill executada:** `10-maia-memoria` - T24 (Cursor + Opus 4.7): consolidou o Gate 0 (T01-T23) em `docs/maia/10-memoria/memoria-gate0-2026-05-25.md` (+ espelho no hub) - resultado, ADRs 001-012, e os debitos D1-D10 do review como backlog inicial da Sprint 1, cada um com dono. HANDOFFs dos dois repos atualizados apontando a Sprint 1. D10 (HANDOFF pinava SHA que envelhece) mitigado: parar de tratar HEAD como verdade durável.
+**Proxima skill recomendada:** `06-maia-implementacao` - Sprint 1 T01 (criar `scripts/convert-skill.ts`), Codex / GPT-5.3. Validacao = Gemini 3.1 Pro (12-code-validator), QA = deepseek + Gemini (07), review = Opus (08), backstop/commits = Guardiao (ADR-004).
+**Bloqueadores atuais:** Nenhum. Pendencias humanas p/ iniciar a Sprint 1: definir duracao da sprint; i18n no Engine (Sprint 1 ou 3); fornecer baseline Claude p/ medir paridade (D9); decisao de push remoto.
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
 ---
@@ -85,11 +85,22 @@ Herda ADRs do ciclo no hub `../BKPilot-Producao_Produt/HANDOFF.md`. Relevantes n
   - **D10** HANDOFF citava HEAD stale (corrigido neste handoff)
 - Backstop do Guardiao (Opus) em cada peca: smoke + `test`/`typecheck`/`lint`/`build`/`gate0` verdes. **50/50 testes + Gate 0 Mock 10/10 + Gate 0 real (Groq) completed + QA final T22 10/10 + cobertura Gemini CONCORDA + review T23 APROVA COM RESSALVAS. Nenhum bug em aberto.** Backstop T23: bateria reproduzida (typecheck exit 0/lint 0/50-50/gate0 10-10), claims conferidos, codigo do Engine nao alterado.
 
-### Proximo - T24 (10-maia-memoria, Cursor + Opus 4.7) - ULTIMA da Pre-Sprint
+### T24 CONCLUIDO (10-maia-memoria, Cursor + Opus 4.7) - PRE-SPRINT TECNICA ENCERRADA
 
-Memoria/encerramento da Pre-Sprint Tecnica + abertura da Sprint 1. Escrever `docs/maia/10-memoria/memoria-gate0-2026-05-25.md`: consolidar resultado do Gate 0 (T01-T23), ADRs, e os 10 debitos (D1-D10) como backlog inicial da Sprint 1 com dono. Atualizar HANDOFF dos DOIS repos apontando a primeira skill da Sprint 1 (Engine real reutilizavel: converter as 12 skills restantes, CursorLLM real, paridade >= 95%). Done: memoria escrita; nenhum debito do Gate 0 sem dono; HANDOFFs apontam Sprint 1. Fim da Pre-Sprint Tecnica.
+Memoria/encerramento escrita em `docs/maia/10-memoria/memoria-gate0-2026-05-25.md` (+ espelho no hub): consolida resultado do Gate 0 (T01-T23), ADRs 001-012 e os 10 debitos (D1-D10) como backlog inicial da Sprint 1, **cada um com dono**. HANDOFFs dos DOIS repos atualizados apontando a Sprint 1. Gate 0 encerrado sem pendencia sem dono. **Fim da Pre-Sprint Tecnica.**
 
-**Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` (T22) = **deepseek-v4-pro** + Gemini. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
+### Proximo - SPRINT 1 (Engine real reutilizavel)
+
+Primeira skill: `06-maia-implementacao` - **T01 da Sprint 1 = criar `scripts/convert-skill.ts`** (Codex / GPT-5.3; ainda nao existe no repo). Escopo da Sprint 1:
+1. `convert-skill.ts` converte as **12 skills web restantes** do skill pack (`docs/maia-skill-pack/`) em manifestos do Engine.
+2. **CursorLLM real** como caminho padrao de qualidade (Mock vira so fluxo/CI).
+3. **Meta paridade >= 95%** vs Claude Code (debito D9) - exige baseline Claude.
+4. Saldar **D1-D8** (timeout global, retry, fallback LLM, pino wiring, aliasing/schema, cobertura de erro).
+5. **Gate 1** como criterio de avanco (formalizar em `02-maia-especificacao` da Sprint 1).
+
+Fora da Sprint 1 (adiado): Worker/Fila (Sprint 2), SaaS Core/multi-tenant/billing/auth (Sprint 3), LLM de producao Papel C (Sprint 3), mobile, MCP no Engine, acoplamento ao BKPilot-Core.
+
+**Regra de papeis (emenda ADR-004, 2026-05-23):** implementacao (06) = Codex/GPT-5.3; validacao NUNCA e Codex - `12-code-validator` = **Gemini 3.1 Pro** (Antigravity), `07-qa` = **deepseek-v4-pro** + Gemini, review (08) = **Opus 4.7**. Backstop + commits = Guardiao (Opus). Commits: 1 por tarefa, sem push.
 
 ---
 
@@ -124,18 +135,18 @@ Memoria/encerramento da Pre-Sprint Tecnica + abertura da Sprint 1. Escrever `doc
 ## 6. Comando de chamada para proxima skill
 
 ```text
-Executar 10-maia-memoria no contexto BKPilot-SkillRunner, alvo T24 (ULTIMA da Pre-Sprint Tecnica).
-CLI/LLM: Cursor + Opus 4.7.
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo Sprint 1 / T01 = criar scripts/convert-skill.ts.
+CLI/LLM: Codex / GPT-5.3 (implementacao). Validacao = Gemini 3.1 Pro (12-code-validator); autor != validador (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (linha T24)
-- ../BKPilot-Producao_Produt/docs/maia/01-diagnostico/diagnostico-2026-05-23-skillrunner.md (roadmap de sprints + abertura Sprint 1)
-- docs/maia/08-review/review-gate0-2026-05-25.md (review T23 + debitos D1-D10)
-- docs/maia/07-qa-validacao/ (relatorio deepseek + cobertura Gemini)
-- docs/maia/06-implementacao/gate0-mock-2026-05-25.md e gate0-cursor-2026-05-25.md
+- docs/maia/10-memoria/memoria-gate0-2026-05-25.md (encerramento Gate 0 + ADRs 001-012 + debitos D1-D10 com dono + abertura Sprint 1)
+- docs/maia/08-review/review-gate0-2026-05-25.md (review T23 - detalhe tecnico dos debitos D1-D10)
+- ../BKPilot-Producao_Produt/docs/maia/01-diagnostico/diagnostico-2026-05-23-skillrunner.md (roadmap de sprints; Sprint 1 = Engine real reutilizavel)
+- ../BKPilot-Producao_Produt/docs/maia-skill-pack/ (as 12 skills web restantes a converter)
+- src/ (Runner + pecas CAP-1..CAP-8 - base a reutilizar), skills/usabilidade/manifest.yaml (formato de manifesto alvo)
 
-Tarefa T24 (memoria/encerramento + abertura Sprint 1): consolidar o resultado do Gate 0 (T01-T23) em docs/maia/10-memoria/memoria-gate0-2026-05-25.md - resultado, ADRs 001-012, e os 10 debitos (D1-D10) do review como backlog inicial da Sprint 1, cada um com dono. Atualizar o HANDOFF dos DOIS repos apontando a primeira skill da Sprint 1 (Engine real reutilizavel: converter as 12 skills restantes via convert-skill.ts, CursorLLM real, meta paridade >= 95%). Done: memoria escrita; nenhum debito do Gate 0 sem dono; HANDOFFs apontam Sprint 1; Gate 0 encerrado sem pendencia. NAO incluir escopo Sprint 1 dentro do Gate 0. NUNCA versionar segredos. NAO commitar, NAO push (Guardiao faz backstop).
+Tarefa Sprint 1 / T01: criar scripts/convert-skill.ts que converte as 12 skills web restantes do skill pack em manifestos do Engine (schema skillManifestSchema). Em seguida, encadear: CursorLLM real como caminho padrao, meta paridade >= 95% vs Claude Code (D9, exige baseline), e saldar D1-D8 (timeout global, retry, fallback LLM, pino wiring, aliasing/schema metrics, llm_override.provider, cobertura de erro). Gate 1 formaliza criterio de avanco (02-maia-especificacao da Sprint 1). NAO incluir Worker/SaaS/billing/auth/mobile/MCP/Core (sprints posteriores). NUNCA versionar segredos. NAO commitar, NAO push (Guardiao faz backstop).
 ```
 
 ---
