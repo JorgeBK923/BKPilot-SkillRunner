@@ -1,14 +1,14 @@
 # HANDOFF - BKPilot-SkillRunner - Pre-Sprint Tecnica
 
-> **PRE-SPRINT TECNICA ENCERRADA em 2026-05-25 (T24 concluido, ULTIMA tarefa).** 24/24 tarefas concluidas; **Gate 0 APROVADO COM RESSALVAS** (Mock 10/10 + real Groq completed); QA final 10/10 + cobertura Gemini CONCORDA (T22); review final APROVA COM RESSALVAS (T23, zero bloqueador); 50 testes verdes; branch `main`, NAO pushado (nao fixar SHA - ver D10). **Gate 0 encerrado SEM pendencia sem dono** - debitos D1-D10 transferidos p/ Sprint 1 com dono (memoria sec 4). **SPEC SPRINT 1 CONCLUIDA (2026-05-26).** Gate 1 formalizado em G1-1..G1-15. **Proxima etapa = `03-maia-planejamento`** (quebrar G1-1..G1-15 em tarefas Sprint 1 T01..T0N). Regra dura mantida: nada de codar sem planejamento aprovado.
+> **PRE-SPRINT TECNICA ENCERRADA em 2026-05-25 (T24 concluido, ULTIMA tarefa).** 24/24 tarefas concluidas; **Gate 0 APROVADO COM RESSALVAS** (Mock 10/10 + real Groq completed); QA final 10/10 + cobertura Gemini CONCORDA (T22); review final APROVA COM RESSALVAS (T23, zero bloqueador); 50 testes verdes; branch `main`, NAO pushado (nao fixar SHA - ver D10). **Gate 0 encerrado SEM pendencia sem dono** - debitos D1-D10 transferidos p/ Sprint 1 com dono (memoria sec 4). **PLANEJAMENTO SPRINT 1 CONCLUIDO (2026-05-27).** Backlog T01-T29 (29 tarefas, <=1 dia cada), caminho critico 7-8 dias uteis (dentro do teto 7-10). **Proxima etapa = `06-maia-implementacao` T01** (D6 metrics required, Codex/GPT-5.3). Regra dura mantida: spec + plano aprovados ANTES de codar.
 
 **Data:** 2026-05-25
 **Origem:** Guardiao MAIA
-**Destino:** Proxima skill MAIA = `03-maia-planejamento` (Sprint 1 - quebrar G1-1..G1-15 em tarefas T01..T0N). Depois 06-implementacao T01.
+**Destino:** Proxima skill MAIA = `06-maia-implementacao` Sprint 1 T01 (D6 metrics required no schema; G1-10), Codex / GPT-5.3. Validacao T02 = Gemini 3.1 Pro.
 **Escopo:** Pre-Sprint Tecnica ENCERRADA (Gate 0 provado e fechado). Abrindo Sprint 1 = Engine real reutilizavel: converter as 12 skills web restantes via `convert-skill.ts`, CursorLLM real como caminho padrao, meta paridade >= 95% vs Claude Code, saldar D1-D8.
 **Status:** T01-T24 CONCLUIDOS. Branch `main`, NAO pushado. Gate 0 APROVADO com MockLLM (T20) E com LLM real via Groq (T21); QA final 10/10 (T22); review final APROVA COM RESSALVAS (T23); memoria/encerramento + abertura Sprint 1 (T24). 50 testes verdes. **Gate 0 encerrado sem pendencia sem dono.** Backstop do Guardiao sobre o T24 pendente.
-**Ultima skill executada:** `02-maia-especificacao` Sprint 1 (Guardiao/Opus 4.7, 2026-05-26): formaliza Gate 1 (G1-1..G1-15 mensuraveis) cobrindo conversor + 13 skills web, CursorLLM real padrao, paridade >=95% (D9), saldar D1-D2/D4-D9 (D3 difere p/ Sprint 2), CAP-9 conversor, CAP-10 i18n hook, ADR-013 (i18n adiado p/ Sprint 3 com hook). Decisoes do owner consolidadas: teto 7-10 dias, i18n hook agora, baseline Claude pelo owner, push remoto liberado. Veredito: APROVA COM RESSALVAS (G1-13 depende de baseline; P7 ALTA). Doc: `docs/maia/02-especificacao/especificacao-sprint1-2026-05-25.md` (+ espelho no hub).
-**Proxima skill recomendada:** `03-maia-planejamento` - Sprint 1 (quebrar G1-1..G1-15 em tarefas T01..T0N, cada uma <=1 dia, com dono por ADR-004; mapear dependências; respeitar teto 7-10 dias uteis). Apos planejamento aprovado -> `06-maia-implementacao` T01 (provavel: `convert-skill.ts`, Codex/GPT-5.3).
+**Ultima skill executada:** `03-maia-planejamento` Sprint 1 (Guardiao/Opus 4.7, 2026-05-27): quebra G1-1..G1-15 em 29 tarefas T01-T29 (<=1 dia cada), com dono por ADR-004 e dependencias mapeadas. Grupos: A saneamento schema (T01-T04, D5/D6), B conversor (T05-T06, CAP-9), C conversao 12 skills (T07-T08), D debts Runtime D7/D1/D2 (T09-T14), E pino wiring (T15-T16, D4), F CursorLLM default + D8 (T17-T18), G i18n hook (T19-T21, ADR-013), H paridade (T22-T23, D9), I gate1-validate + passada oficial (T24-T25), J encerramento (T26-T29 QA/cobertura/review/memoria). Caminho critico 7-8 dias uteis (cabe no teto 7-10). EXT-1 baseline Claude e EXT-2 chave Cursor sao pre-condicao. Veredito: APROVA COM RESSALVAS. Doc: `docs/maia/03-planejamento/planejamento-sprint1-2026-05-27.md` (+ espelho no hub).
+**Proxima skill recomendada:** `06-maia-implementacao` Sprint 1 **T01** (D6 - tornar `result.metrics` obrigatorio no `resultSchema`; G1-10). 0.5 dia. Codex/GPT-5.3 implementa; T02 (Gemini) valida. Inicio da janela de implementacao da Sprint 1.
 **Bloqueadores atuais:** Nenhum. Pendencias humanas p/ iniciar a Sprint 1: definir duracao da sprint; i18n no Engine (Sprint 1 ou 3); fornecer baseline Claude p/ medir paridade (D9); decisao de push remoto.
 **Repo:** local `C:\Users\Jorge\IA\Produto\BKPilot-SkillRunner\` + remote `https://github.com/JorgeBK923/BKPilot-SkillRunner.git` (branch `main`, remote ainda nao recebeu push da Pre-Sprint)
 
@@ -134,21 +134,25 @@ Fora da Sprint 1 (adiado): Worker/Fila (Sprint 2), SaaS Core/multi-tenant/billin
 
 ## 6. Comando de chamada para proxima skill
 
-**REGRA DURA (owner, 2026-05-25):** NUNCA codar sem especificacao/objetivo. Spec da Sprint 1 ja concluida. Proxima fase = planejamento (quebrar em tarefas). So apos planejamento aprovado, codigo entra.
+**REGRA DURA (owner, 2026-05-25):** NUNCA codar sem spec+plano aprovados. Spec ✅ + plano ✅ → codigo libera, começando por T01 (D6 metrics required).
 
 ```text
-Executar 03-maia-planejamento no contexto BKPilot-SkillRunner, alvo Sprint 1 (quebrar G1-1..G1-15 em tarefas T01..T0N).
+Executar 06-maia-implementacao no contexto BKPilot-SkillRunner, alvo Sprint 1 T01 (D6 - tornar `result.metrics` obrigatorio no `resultSchema`; cobre G1-10).
+CLI/LLM: Codex / GPT-5.3 (implementacao). Validacao T02 = Gemini 3.1 Pro (12-code-validator); autor != validador (ADR-004).
 
 Ler antes:
 - HANDOFF.md (este repo)
-- docs/maia/02-especificacao/especificacao-sprint1-2026-05-25.md (Gate 1 - G1-1..G1-15, CAP-9/10, ADR-013, prazo 7-10 dias)
-- docs/maia/10-memoria/memoria-gate0-2026-05-25.md (debitos D1-D10 com dono)
-- docs/maia/08-review/review-gate0-2026-05-25.md (detalhe tecnico dos debitos)
-- ../BKPilot-Producao_Produt/docs/maia/03-planejamento/planejamento-2026-05-23-skillrunner.md (modelo do plano do Gate 0 - replicar formato)
-- ../BKPilot-Producao_Produt/docs/maia-skill-pack/ (12 skills web - input do conversor)
-- src/ (Runner + pecas CAP-1..8 a estender), skills/usabilidade/manifest.yaml (formato alvo)
+- docs/maia/03-planejamento/planejamento-sprint1-2026-05-27.md (linha T01 + T02; caminho critico)
+- docs/maia/02-especificacao/especificacao-sprint1-2026-05-25.md (G1-10, secao 4)
+- docs/maia/08-review/review-gate0-2026-05-25.md (descricao do debito D6)
+- src/core/schemas/result.schema.ts (alvo da mudanca)
+- src/runtime/runner.ts (consumidor a ajustar)
 
-Tarefa: quebrar Gate 1 (G1-1..G1-15) em tarefas T01..T0N (cada uma <=1 dia), mapear dependencias, atribuir dono por ADR-004 (implementacao = Codex/GPT-5.3; validacao = Gemini 3.1 Pro 12-code-validator; QA = deepseek + Gemini 07; review = Opus 08; backstop/commits = Guardiao). Caminho critico cabivel no teto 7-10 dias uteis - se nao couber, sinalizar P11 e propor corte. Saida: docs/maia/03-planejamento/planejamento-sprint1-<data>.md (+ espelho no hub). Marcar baseline Claude (D9/G1-13) como dependencia do owner para nao bloquear codigo. NAO codar. NAO commitar, NAO push (Guardiao faz backstop).
+Tarefa T01 (D6 / G1-10): tornar `result.metrics` obrigatorio no `resultSchema` (zod). Ajustar `buildResult` para sempre montar `metrics` (mesmo em status failed - com valores zerados se necessario). NAO quebrar testes existentes (50/50 verde). Saida: `src/core/schemas/result.schema.ts` ajustado + `src/runtime/runner.ts` (buildResult). 0.5 dia. Validacao na T02 (Gemini): testes que provam o rejeitar sem metrics + suite completa verde.
+
+NAO incluir T02 nesta passada (validacao separada por ADR-004). NUNCA versionar segredos. NAO commitar, NAO push (Guardiao faz backstop).
+
+Dependencias externas (lembrete - donos = owner): EXT-1 baseline Claude (T22), EXT-2 chave Cursor (T17 em diante).
 ```
 
 ---
